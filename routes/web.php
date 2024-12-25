@@ -20,7 +20,6 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::group(["prefix" => "home", "as" => "home."], function () {
         Route::get('/', ['uses' => 'App\Http\Controllers\HomeController@index', 'as' => 'index']);
     });
-    // Route::get('/home', [HomeController::class, 'index'])->name('home');
 });
 
 require __DIR__.'/auth.php';

@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->to(Filament::getUrl());
         }
         
-        return redirect()->intended(route('home', absolute: false));
+        return redirect()->intended(route('home.index', absolute: false));
     }
 
     /**
