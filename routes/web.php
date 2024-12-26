@@ -4,21 +4,42 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth', 'verified')->group(function () {
+    Route::get('/', ['uses' => 'App\Http\Controllers\HomeController@index', 'as' => 'home.index']);
+    
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    Route::group(["prefix" => "category", "as" => "category."], function () {
+        Route::get('/', ['uses' => 'App\Http\Controllers\CategoryController@index', 'as' => 'index']);
+    });
 
-    Route::group(["prefix" => "home", "as" => "home."], function () {
-        Route::get('/', ['uses' => 'App\Http\Controllers\HomeController@index', 'as' => 'index']);
+    Route::group(["prefix" => "wallet", "as" => "wallet."], function () {
+        Route::get('/', ['uses' => 'App\Http\Controllers\WalletController@index', 'as' => 'index']);
+    });
+
+    Route::group(["prefix" => "income", "as" => "income."], function () {
+        Route::get('/', ['uses' => 'App\Http\Controllers\IncomeController@index', 'as' => 'index']);
+        Route::get('/create', ['uses' => 'App\Http\Controllers\IncomeController@create', 'as' => 'create']);
+        Route::post('/store', ['uses' => 'App\Http\Controllers\IncomeController@store', 'as' => 'store']);
+    });
+
+    Route::group(["prefix" => "expense", "as" => "expense."], function () {
+        Route::get('/', ['uses' => 'App\Http\Controllers\ExpenseController@index', 'as' => 'index']);
+        Route::get('/create', ['uses' => 'App\Http\Controllers\ExpenseController@create', 'as' => 'create']);
+        Route::post('/store', ['uses' => 'App\Http\Controllers\ExpenseController@store', 'as' => 'store']);
+    });
+
+    Route::group(["prefix" => "transfer", "as" => "transfer."], function () {
+        Route::get('/', ['uses' => 'App\Http\Controllers\TransferController@index', 'as' => 'index']);
+        Route::get('/create', ['uses' => 'App\Http\Controllers\TransferController@create', 'as' => 'create']);
+        Route::post('/store', ['uses' => 'App\Http\Controllers\TransferController@store', 'as' => 'store']);
     });
 });
 

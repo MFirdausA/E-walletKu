@@ -1,4 +1,20 @@
+@extends('layouts.app')
+
+@section('content')
 <x-guest-layout>
+
+    <div class="w-full items-center justify-center flex">
+        <div class="text-black text-2xl font-extrabold font-['Poppins']">E-WalletKu</div>
+    </div>
+
+    <div class="w-full mt-2 items-center justify-center flex">
+        <div class="text-[#8d8d8d] text-base font-normal font-['Poppins']">FINANCIAL MANAGEMENT</div>
+    </div>
+
+    <div class="h-6 px-2 justify-center items-center ">
+        <div class="text-center text-[#8d8d8d] text-base font-normal font-['Poppins']">-Register Your Account-</div>
+    </div>
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -39,14 +55,15 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex items-center justify-center mt-4">
             <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
             </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
         </div>
+
+        <x-primary-button class="w-full justify-center mt-4">
+            {{ __('Register') }}
+        </x-primary-button>
     </form>
 </x-guest-layout>
+@endsection
