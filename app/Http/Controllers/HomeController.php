@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\category;
+use App\Models\transaction;
+use App\Models\TransactionType;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -11,7 +15,25 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('pages.home');
+        $transactions = transaction::all();
+        $income =  TransactionType::where('name', 'Income')->first();
+        $incomeAmount = transaction::where('transaction_type_id', $income->id)->sum('amount');
+        $expense =  TransactionType::where('name', 'Expense')->first();
+        $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
+        $amount = $income->transactions()->sum('amount') - $expense->transactions()->sum('amount');
+        $categoryTransaction =  Category::pluck('name');
+        $dateTransaction = Transaction::first()->date;
+        $dateFormat =  carbon::parse($dateTransaction)->format('F d');
+        $dateOfDay =  carbon::parse($dateTransaction)->format('l');
+        return view('pages.home',[
+        'transactions' => $transactions,
+        'amount' => $amount, 
+        'incomeAmount' => $incomeAmount, 
+        'expenseAmount' => $expenseAmount,
+        'categoryTransaction' => $categoryTransaction,
+        'dateFormat' => $dateFormat,
+        'dateOfDay' => $dateOfDay
+    ]);
     }
 
     /**
