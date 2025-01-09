@@ -2,7 +2,7 @@
 @section('content')
 <div class="container p-6 min-h-screen bg-white">
 
-    <div class="font-bold flex justify-center items-center text-xl">Add Your Income</div>
+    <div class="font-bold flex justify-center items-center text-xl">Transfer </div>
     <div class="w-full flex justify-between items-center mt-4">
         <a href="">
             <img class="w-4" src="{{ asset('img/back.svg') }}" alt="back">
