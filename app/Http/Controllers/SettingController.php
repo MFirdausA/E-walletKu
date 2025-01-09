@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class IncomeController extends Controller
+class SettingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        
+        return view('pages.settings');
     }
 
     /**
@@ -19,7 +19,7 @@ class IncomeController extends Controller
      */
     public function create()
     {
-        return view('pages.income.create');
+        //
     }
 
     /**
@@ -33,9 +33,9 @@ class IncomeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(string $id)
     {
-        return view('pages.income.detail');
+        //
     }
 
     /**
