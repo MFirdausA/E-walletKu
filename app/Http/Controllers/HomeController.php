@@ -18,6 +18,7 @@ class HomeController extends Controller
         $transactions = transaction::all();
         $income =  TransactionType::where('name', 'Income')->first();
         $incomeAmount = transaction::where('transaction_type_id', $income->id)->sum('amount');
+        // dd($income);
         $expense =  TransactionType::where('name', 'Expense')->first();
         $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
         $amount = $income->transactions()->sum('amount') - $expense->transactions()->sum('amount');

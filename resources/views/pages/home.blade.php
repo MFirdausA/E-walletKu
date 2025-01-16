@@ -151,7 +151,7 @@
                             <img src="{{ asset('img/home-icon.svg') }}" class="w-4 h-4 flex shrink-0" alt="icon">
                             <span class="font-semibold text-sm text-white">Home</span>
                         </a>
-                        <a href="" class="flex flex-col items-center  text-center gap-2">
+                        <a href="javascript:void(0)" id="openModal" class="flex flex-col items-center text-center gap-2">
                             <div class="w-9 h-9 bg-[#f2f4f5] rounded-full flex-row justify-center items-center inline-flex">
                                 <div class="text-center text-[#ffa500] text-xl font-normal font-['Poppins']">+</div>
                             </div>
@@ -163,5 +163,133 @@
                     </div>
                 </nav>
             </div>
-        </div>
+            <div id="NavModal" class="hidden fixed inset-0 z-50 justify-center items-center">
+                <div class="w-full max-w-[640px] shadow-lg">
+                    <div class="fixed bg-white max-w-[640px] bottom-0 rounded-t-xl px-5 w-full left-[50%] translate-x-[-50%] gap-4 py-4 flex-row items-center justify-center">
+                        <div class="flex-col">
+                            <button class="flex w-[32px] h-[32px] justify-center items-center  rounded-full">
+                                <div id="closeModalButton" class="text-black hover:text-gray-700">&times;</div>
+                            </button>
+                            <div class="flex justify-center items-center p-2 mb-2">Add Transaction</div>
+                        </div>
+                        <div class="flex-col">
+                            <div class="grid grid-cols-4 gap-2">
+                                <button  class="w-full items-center">
+                                    <a href="{{ route('income.create') }}">
+                                    <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
+                                        <img src="{{ asset('') }}" alt="">
+                                    </div>
+                                    <div class="gap-1 inline-flex">
+                                        <div class="text-black text-xs text-center font-normal font-['Poppins']">Income</div>
+                                    </div>
+                                </a>
+                                </button>
+                                <button class="w-full items-center">
+                                    <a href="{{ route('expense.create') }}">
+                                    <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
+                                        <img src="{{ asset('') }}" alt="">
+                                    </div>
+                                    <div class="gap-1 inline-flex">
+                                        <div class="text-black text-xs text-center font-normal font-['Poppins']">Expense</div>
+                                    </div>
+                                </a>
+                                </button>
+                                <button class="w-full items-center">
+                                    <a href="{{ route('planned.create') }}">
+                                    <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
+                                        <img src="{{ asset('') }}" alt="">
+                                    </div>
+                                    <div class="gap-1 inline-flex">
+                                        <div class="text-black text-xs text-center font-normal font-['Poppins']">Planned</div>
+                                    </div>
+                                </a>
+                                </button>
+                                <button class="w-full items-center">
+                                    <a href="{{ route('transfer.create') }}">
+                                        <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
+                                            <img src="{{ asset('') }}" alt="">
+                                        </div>
+                                        <div class="gap-1 inline-flex">
+                                            <div class="text-black text-xs text-center font-normal font-['Poppins']">Transfer</div>
+                                        </div>
+                                    </a>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{-- <div id="NavModal" class="hidden fixed inset-0 z-50 flex justify-center items-center">
+                <div class="bg-gradient-to-t from-white/100 to-zinc-50/90 backdrop-blur-sm w-full h-full max-w-[640px] shadow-lg">
+                    <div id="buttonContainer" class="fixed bottom-5 px-5 w-full left-[50%] translate-x-[-50%] gap-4 py-4 grid grid-cols-4 justify-between">
+                        <button  class="w-full items-center">
+                            <a href="{{ route('income.create') }}">
+                            <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
+                                <img src="{{ asset('') }}" alt="">
+                            </div>
+                            <div class="gap-1 inline-flex">
+                                <div class="text-black text-xs text-center font-normal font-['Poppins']">Income</div>
+                            </div>
+                        </a>
+                        </button>
+                        <button class="w-full items-center">
+                            <a href="{{ route('expense.create') }}">
+                            <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
+                                <img src="{{ asset('') }}" alt="">
+                            </div>
+                            <div class="gap-1 inline-flex">
+                                <div class="text-black text-xs text-center font-normal font-['Poppins']">Expense</div>
+                            </div>
+                        </a>
+                        </button>
+                        <button class="w-full items-center">
+                            <a href="{{ route('planned.create') }}">
+                            <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
+                                <img src="{{ asset('') }}" alt="">
+                            </div>
+                            <div class="gap-1 inline-flex">
+                                <div class="text-black text-xs text-center font-normal font-['Poppins']">Planned</div>
+                            </div>
+                        </a>
+                        </button>
+                        <button class="w-full items-center">
+                            <a href="{{ route('transfer.create') }}">
+                                <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
+                                    <img src="{{ asset('') }}" alt="">
+                                </div>
+                                <div class="gap-1 inline-flex">
+                                    <div class="text-black text-xs text-center font-normal font-['Poppins']">Transfer</div>
+                                </div>
+                            </a>
+                        </button>
+                    </div>
+                    <div class="w-full mt-4 items-center justify-center px-5">
+                        <button class="flex w-[42px] h-[42px] justify-center items-center bg-slate-300 rounded-full">
+                            <div id="closeModalButton" class="text-gray-500 hover:text-gray-700">&times;</div>
+                        </button>
+                    </div>
+                </div>
+            </div> --}}
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+    const openModalButton = document.getElementById('openModal');
+    const closeModalButtons = document.querySelectorAll('#closeModalButton, #closeModalFooterButton');
+    const modal = document.getElementById('NavModal');
+
+    // Open Modal
+    openModalButton.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    });
+
+    // Close Modal
+    closeModalButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        });
+    });
+});
+
+        </script>
 @endsection

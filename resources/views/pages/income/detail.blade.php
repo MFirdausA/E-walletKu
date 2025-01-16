@@ -58,18 +58,18 @@
 }
 </style>
 @section('content')
-<div class="container p-6 min-h-screen bg-[#f2f2f7]">
+<div class="container p-6 min-h-screen  bg-[#f2f2f7]">
 
     <div class="font-bold flex justify-center items-center text-xl">INCOME DETAIL</div>
     <div class="w-full flex justify-between items-center mt-4">
-        <a href="">
+        <a href="{{ route('home.index') }}">
             <img class="w-4" src="{{ asset('img/back.svg') }}" alt="back">
         </a>
         <div class="flex gap-3 items-center">
             <button class="border border-[#ffa500] flex justify-between gap-1 py-2 px-4 my-1 mx-0.2 rounded-lg"><img src="{{ asset('img/calender-icon.svg') }}" alt="">Month</button>
-            <div class="w-[42px] h-[42px] px-2 bg-[#ffa500] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
+            <a href="{{ route('income.create',['from' => 'detail']) }}" class="w-[42px] h-[42px] px-2 bg-[#ffa500] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
                 <div class="text-center text-white text-xl font-normal font-['Poppins']">+</div>
-            </div>
+            </a>
         </div>
     </div>
     <div class="w-full mt-3">
