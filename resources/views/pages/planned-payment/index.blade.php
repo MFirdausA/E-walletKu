@@ -2,14 +2,14 @@
 @section('content')
 
 <div class="container p-6 min-h-screen bg-[#f2f2f7]">
-    <div class="font-bold flex justify-center items-center text-xl">INCOME DETAIL</div>
+    <div class="font-bold flex justify-center items-center text-xl">PLANNED PAYMENT</div>
     <div class="w-full flex justify-between items-center mt-4">
         <a href="">
             <img class="w-4" src="{{ asset('img/back.svg') }}" alt="back">
         </a>
-        <div class="w-[42px] h-[42px] px-2 bg-[#ffa500] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
+        <a href="{{ route('planned.create') }}" class="w-[42px] h-[42px] px-2 bg-[#ffa500] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
             <div class="text-center text-white text-xl font-normal font-['Poppins']">+</div>
-        </div>
+        </a>
     </div>
     <div class="w-full mt-3">
         <div class="text-black text-2xl font-normal font-['Poppins']">Planned Payment</div>
