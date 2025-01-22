@@ -18,14 +18,12 @@ class HomeController extends Controller
         $transactions = transaction::all();
         $income =  TransactionType::where('name', 'Income')->first();
         $incomeAmount = transaction::where('transaction_type_id', $income->id)->sum('amount');
-        // dd($income);
         $expense =  TransactionType::where('name', 'Expense')->first();
         $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
         $amount = $income->transactions()->sum('amount') - $expense->transactions()->sum('amount');
         $categoryTransaction =  Category::pluck('name');
-        $dateTransaction = Transaction::first()->date;
-        $dateFormat =  carbon::parse($dateTransaction)->format('F d');
-        $dateOfDay =  carbon::parse($dateTransaction)->format('l');
+        $dateFormat =  carbon::now()->format('F d');
+        $dateOfDay =  carbon::now()->format('l');
         return view('pages.home',[
         'transactions' => $transactions,
         'amount' => $amount, 
