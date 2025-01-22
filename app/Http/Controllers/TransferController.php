@@ -60,6 +60,7 @@ class TransferController extends Controller
         }
 
         transfer::create([
+            'user_id' => $request->user_id,
             'title' => $request->title,
             'description' => $request->description,
             'date' => $request->date,

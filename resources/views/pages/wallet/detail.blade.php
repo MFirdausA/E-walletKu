@@ -13,24 +13,25 @@
         <div class="items-center text-wrap">
             <div class="text-black font-bold">income this month</div>
             <div class="flex justify-center">
-                <div class="text-black font-bold">40.000,00 IDR</div>
+                <div class="text-black font-bold">{{ number_format($incomeAmount, 2, ',', '.') }}</div>
             </div>
         </div>
         <div class="items-center text-wrap">
             <div class="text-black font-bold">expense this month</div>
             <div class="flex justify-center">
-                <div class="text-black font-bold">40.000,00 IDR</div>
+                <div class="text-black font-bold">{{ number_format($expenseAmount, 2, ',', '.') }}</div>
             </div>
         </div>
     </div>
+    @foreach ($wallets as $wallet)
     <div class="card">
         <div class=" bg-[#ffa500] rounded-tl-xl rounded-tr-xl mt-[24px] p-3">
             <div class="w-full">
                 <div class="self-stretch font-medium">
-                    Account name
+                    {{ $wallet->name }}
                 </div>
                 <div class="justify-center items-center mt-[18px]">
-                    <div class="self-stretch text-2xl font-bold flex text-wrap justify-center">-20.000,00 IDR</div>
+                    <div class="self-stretch text-2xl font-bold flex text-wrap justify-center">{{ number_format($wallet->remainingBalance, 2, ',', '.') }} IDR  </div>
                 </div>
             </div>
         </div>
@@ -38,17 +39,18 @@
                 <div class="items-center text-wrap">
                     <div class="text-black font-bold">income this month</div>
                     <div class="flex justify-center">
-                        <div class="text-black font-bold">40.000,00 IDR</div>
+                        <div class="text-black font-bold">{{ number_format($wallet->incomeAmount, 2, ',', '.') }} IDR</div>
                     </div>
                 </div>
                 <div class="items-center text-wrap">
                     <div class="text-black font-bold">expense this month</div>
                     <div class="flex justify-center">
-                        <div class="text-black font-bold">40.000,00 IDR</div>
+                        <div class="text-black font-bold">{{ number_format($wallet->expenseAmount, 2, ',', '.') }} IDR</div>
                     </div>
                 </div>
             </div>
     </div>
+    @endforeach
     <div id="BottomNav" class="relative flex w-full h-[100px] shrink-0">
         <nav class="fixed bottom-5 w-full max-w-[640px] px-5 left-[50%] translate-x-[-50%] z-10">
             <div class="grid grid-cols-3 h-fit rounded-[40px] justify-between items-center py-4 px-5 bg-[#ffa500]">

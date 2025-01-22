@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\transaction;
 use Illuminate\Http\Request;
+use App\Models\TransactionType;
+use App\Models\transfer;
+use App\Models\wallet;
 
 class WalletController extends Controller
 {
@@ -19,7 +23,37 @@ class WalletController extends Controller
      */
     public function create()
     {
-        return view('pages.wallet.create');
+        $transaction = transaction::all();
+        $wallets = Wallet::all()->map(function ($wallet) {
+            $incomeAmount = Transaction::where('wallet_id', $wallet->id)
+                ->whereHas('transactionType', function ($query) {
+                    $query->where('name', 'Income');
+                })
+                ->sum('amount');
+    
+            $expenseAmount = Transaction::where('wallet_id', $wallet->id)
+                ->whereHas('transactionType', function ($query) {
+                    $query->where('name', 'Expense');
+                })
+                ->sum('amount');
+            
+            $tranferIn = Transfer::where('to_wallet_id', $wallet->id)
+                ->sum('amount');
+            $tranferOut = Transfer::where('wallet_id', $wallet->id)
+                ->sum('amount');
+                
+            $wallet->incomeAmount = $incomeAmount + $tranferIn;
+            $wallet->expenseAmount = $expenseAmount + $tranferOut;
+            $wallet->remainingBalance = ($incomeAmount - $expenseAmount) + ($tranferIn - $tranferOut);
+    
+            return $wallet;
+        });
+        $income =  TransactionType::where('name', 'Income')->first();
+        $incomeAmount = transaction::where('transaction_type_id', $income->id)->sum('amount');
+        // dd($income);
+        $expense =  TransactionType::where('name', 'Expense')->first();
+        $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
+        return view('pages.wallet.detail', compact('incomeAmount', 'expenseAmount', 'wallets'));
     }
 
     /**

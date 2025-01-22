@@ -25,7 +25,7 @@ Route::middleware('auth', 'verified')->group(function () {
 
     Route::group(["prefix" => "wallet", "as" => "wallet."], function () {
         Route::get('/', ['uses' => 'App\Http\Controllers\WalletController@index', 'as' => 'index']);
-        Route::get('/create', ['uses' => 'App\Http\Controllers\WalletController@create', 'as' => 'create']);
+        Route::get('/detail', ['uses' => 'App\Http\Controllers\WalletController@create', 'as' => 'create']);
         Route::post('/store', ['uses' => 'App\Http\Controllers\WalletController@store', 'as' => 'store']);
     });
 
