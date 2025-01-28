@@ -121,20 +121,20 @@
                         <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
                             <div class="justify-center items-center gap-3 inline-flex">
                             <div class="text-center text-black text-[12px] font-normal font-['Poppins']">{{ $transaction->category->name }}</div>
-                            <img class="w-4 h-4" src="{{ asset('img/categories/' . $transaction->category->cover) }}" />
+                            <img class="w-4 h-4" src="{{ asset('storage/' . $transaction->category->cover) }}" />
                             </div>
                         </div>
                         <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
                             <div class="justify-center items-center gap-3 inline-flex">
                             <div class="text-center text-black text-[12px] font-normal font-['Poppins']">{{ $transaction->wallet->name }}</div>
-                            <img class="w-4 h-4" src="{{ $transaction->cover }}" />
+                            <img class="w-4 h-4" src="{{ asset('storage/' . $transaction->wallet->cover) }}" />
                             </div>
                         </div>
                     </div>
                     <div class="flex-col justify-start items-center pt-2 pb-5">
                         <div class="flex-row justify-start items-center gap-2.5 inline-flex">
                             <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
-                                <img class="w-6 h-6" src="https://via.placeholder.com/24x24" />
+                                <img class="w-6 h-6" src="{{ asset('storage/' . $transaction->transactionTypes->cover) }}" />
                             </div>
                             <div class="h-full justify-start items-center gap-2.5 inline-flex">
                                 <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">{{ number_format($transaction->amount, 2, ',', '.') }}</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
