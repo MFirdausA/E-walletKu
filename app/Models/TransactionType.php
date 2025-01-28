@@ -11,7 +11,8 @@ class TransactionType extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-    'name', 
+    'name',
+    'cover', 
     'user_id'
     ];
 
@@ -22,11 +23,11 @@ class TransactionType extends Model
 
     public function transactions()
     {
-        return $this->hasMany(Transaction::class);
+        return $this->hasMany(Transaction::class , 'transaction_type_id');
     }
 
     public function plannedPayments()
     {
-        return $this->hasMany(PlannedPayment::class);
+        return $this->hasMany(PlannedPayment::class, 'transaction_type_id');
     }
 }

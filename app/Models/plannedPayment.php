@@ -11,24 +11,22 @@ class plannedPayment extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'transaction_type_id', 
         'title', 
-        'category_id', 
-        'status_id', 
         'description', 
         'start_date', 
-        'end_date', 
-        'repeat_type_id', 
-        'repeat_count', 
-        'next_interval', 
+        'transaction_type_id', 
         'wallet_id', 
         'amount', 
+        'category_id', 
+        'status_id', 
+        'repeat_type_id', 
+        'repeat_count', 
         'user_id'
     ];
 
     public function transactionType()
     {
-        return $this->belongsTo(TransactionType::class);
+        return $this->belongsTo(TransactionType::class, 'transaction_type_id');
     }
 
     public function category()

@@ -10,7 +10,8 @@ class wallet extends Model
     use HasFactory;
 
     protected $fillable = [
-    'name', 
+    'name',
+    'cover',
     'balance', 
     'user_id'
     ];

@@ -25,12 +25,16 @@ class TransactionTypeResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                ->required()
-                ->columnSpan('full')
-                ->maxLength(255),
-            ]);
+        ->schema([
+            Forms\Components\FileUpload::make('cover')
+            ->image()
+            ->required()
+            ->columnSpan(2),
+            Forms\Components\TextInput::make('name')
+            ->required()
+            ->columnSpan('full')
+            ->maxLength(255),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -38,6 +42,7 @@ class TransactionTypeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\ImageColumn::make('cover'),
             ])
             ->filters([
                 //

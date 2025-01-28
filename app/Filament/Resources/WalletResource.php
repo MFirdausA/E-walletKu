@@ -25,6 +25,10 @@ class WalletResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\FileUpload::make('cover')
+                ->image()
+                ->required()
+                ->columnSpan(2),
                 Forms\Components\TextInput::make('name')
                 ->required()
                 ->columnSpan('full')
@@ -37,7 +41,7 @@ class WalletResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('balance'),
+                Tables\Columns\ImageColumn::make('cover'),
             ])
             ->filters([
                 //
