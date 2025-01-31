@@ -3,7 +3,7 @@
 
 <div class="container p-6">
     <div class="font-bold flex justify-center items-center text-xl">ACCOUNT</div>
-    <a href="{{ route('wallet.index') }}" class="w-full flex justify-between items-center mt-4">
+    <a href="{{ route('home.index') }}" class="w-full flex justify-between items-center mt-4">
             <img class="w-4" src="{{ asset('img/back.svg') }}" alt="back">
         <div class="w-[42px] h-[42px] px-2 bg-[#ffa500] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
             <div class="text-center text-white text-xl font-normal font-['Poppins']">+</div>
