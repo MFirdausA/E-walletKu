@@ -73,236 +73,75 @@
         </a>
     </div>
     <div class="w-full mt-3">
-        <div class="text-black text-2xl font-normal font-['Poppins']">Income</div>
-        <div class="text-black text-[32px] font-bold font-['Poppins']">IDR 100.000</div>
+        <div class="text-black text-2xl font-normal font-['Poppins']">Expense</div>
+        <div class="text-black text-[32px] font-bold font-['Poppins']">IDR {{ number_format($expenseAmount , 2, ',', '.') }}</div>
     </div>
     <figure class="highcharts-figure">
         <div id="container"></div>
     </figure>
     <section>
-        <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
-            <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
-                <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">food & drink</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
+        @foreach ($transactions as $transaction)
+            <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
+                <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
+                    <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
+                        <div class="justify-center items-center gap-3 inline-flex">
+                        <div class="text-center text-black text-[12px] font-normal font-['Poppins']">{{ $transaction->category->name }}</div>
+                        <img class="w-4 h-4" src="{{ asset('storage/' . $transaction->category->cover) }}" />
+                        </div>
+                    </div>
+                    <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
+                        <div class="justify-center items-center gap-3 inline-flex">
+                        <div class="text-center text-black text-[12px] font-normal font-['Poppins']">{{ $transaction->wallet->name }}</div>
+                        <img class="w-4 h-4" src="{{ asset('storage/' . $transaction->wallet->cover) }}" />
+                        </div>
                     </div>
                 </div>
-                <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">Bank</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-            </div>
-            <div class="flex-col justify-start items-center pt-2 pb-5">
-                <div class="flex-row justify-start items-center gap-2.5 inline-flex">
-                    <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
-                        <img class="w-6 h-6" src="https://via.placeholder.com/24x24" />
-                    </div>
-                    <div class="h-full justify-start items-center gap-2.5 inline-flex">
-                        <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">25.000,00</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
-            <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
-                <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">food & drink</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-                <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">Bank</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
+                <div class="flex-col justify-start items-center pt-2 pb-5">
+                    <div class="flex-row justify-start items-center gap-2.5 inline-flex">
+                        <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
+                            <img class="w-6 h-6" src="{{ asset('storage/' . $transaction->transactionType->cover) }}" />
+                        </div>
+                        <div class="h-full justify-start items-center gap-2.5 inline-flex">
+                            <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">{{ number_format($transaction->amount, 2, ',', '.') }}</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="flex-col justify-start items-center pt-2 pb-5">
-                <div class="flex-row justify-start items-center gap-2.5 inline-flex">
-                    <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
-                        <img class="w-6 h-6" src="https://via.placeholder.com/24x24" />
-                    </div>
-                    <div class="h-full justify-start items-center gap-2.5 inline-flex">
-                        <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">25.000,00</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
-            <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
-                <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">food & drink</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-                <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">Bank</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-            </div>
-            <div class="flex-col justify-start items-center pt-2 pb-5">
-                <div class="flex-row justify-start items-center gap-2.5 inline-flex">
-                    <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
-                        <img class="w-6 h-6" src="https://via.placeholder.com/24x24" />
-                    </div>
-                    <div class="h-full justify-start items-center gap-2.5 inline-flex">
-                        <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">25.000,00</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
-            <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
-                <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">food & drink</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-                <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">Bank</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-            </div>
-            <div class="flex-col justify-start items-center pt-2 pb-5">
-                <div class="flex-row justify-start items-center gap-2.5 inline-flex">
-                    <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
-                        <img class="w-6 h-6" src="https://via.placeholder.com/24x24" />
-                    </div>
-                    <div class="h-full justify-start items-center gap-2.5 inline-flex">
-                        <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">25.000,00</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
-            <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
-                <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">food & drink</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-                <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">Bank</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-            </div>
-            <div class="flex-col justify-start items-center pt-2 pb-5">
-                <div class="flex-row justify-start items-center gap-2.5 inline-flex">
-                    <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
-                        <img class="w-6 h-6" src="https://via.placeholder.com/24x24" />
-                    </div>
-                    <div class="h-full justify-start items-center gap-2.5 inline-flex">
-                        <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">25.000,00</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
-            <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
-                <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">food & drink</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-                <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">Bank</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-            </div>
-            <div class="flex-col justify-start items-center pt-2 pb-5">
-                <div class="flex-row justify-start items-center gap-2.5 inline-flex">
-                    <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
-                        <img class="w-6 h-6" src="https://via.placeholder.com/24x24" />
-                    </div>
-                    <div class="h-full justify-start items-center gap-2.5 inline-flex">
-                        <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">25.000,00</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
-            <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
-                <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">food & drink</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-                <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
-                    <div class="justify-center items-center gap-3 inline-flex">
-                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">Bank</div>
-                    <img class="w-4 h-4" src="https://via.placeholder.com/16x16" />
-                    </div>
-                </div>
-            </div>
-            <div class="flex-col justify-start items-center pt-2 pb-5">
-                <div class="flex-row justify-start items-center gap-2.5 inline-flex">
-                    <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
-                        <img class="w-6 h-6" src="https://via.placeholder.com/24x24" />
-                    </div>
-                    <div class="h-full justify-start items-center gap-2.5 inline-flex">
-                        <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">25.000,00</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @endforeach
     </section>
 </div>
 
-    <script>
-        // Data retrieved from https://olympics.com/en/olympic-games/beijing-2022/medals
-Highcharts.chart('container', {
-    chart: {
-        type: 'pie',
-        options3d: {
-            enabled: true,
-            alpha: 45
-        }
-    },
-    title: {
-        text: ''
-    },
-    subtitle: {
-        text: ''
-    },
-    plotOptions: {
-        pie: {
-            innerSize: 100,
-            depth: 45
-        }
-    },
-    series: [{
-        name: 'Medals',
-        data: [
-            ['Norway', 16],
-            ['Germany', 12],
-            ['USA', 8],
-            ['Sweden', 8],
-            ['Netherlands', 8],
-            ['ROC', 6],
-            ['Austria', 7],
-            ['Canada', 4],
-            ['Japan', 3]
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/api/expense-chart')
+            .then(response => response.json())
+            .then(data => {
+                const chartData = data.map(item => [item.category, item.amount]);
 
-        ]
-    }]
-});
-
-    </script>
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'pie',
+                        options3d: {
+                            enabled: true,
+                            alpha: 35
+                        }
+                    },
+                    title: {
+                        text: 'Expense Category'
+                    },
+                    plotOptions: {
+                        pie: {
+                            innerSize: 100,
+                            depth: 35
+                        }
+                    },
+                    series: [{
+                        name: 'Amount',
+                        data: chartData
+                    }]
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    });
+</script>
 @endsection

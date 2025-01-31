@@ -75,8 +75,29 @@ class IncomeController extends Controller
      */
     public function show()
     {
-        return view('pages.income.detail');
+        $transactions = transaction::where('transaction_type_id', 1)->get();
+        $income =  TransactionType::where('name', 'Income')->first();
+        $incomeAmount = transaction::where('transaction_type_id', $income->id)->sum('amount');
+        return view('pages.income.detail', compact('transactions', 'incomeAmount'));
     }
+
+    public function incomeChart()
+    {
+    $incomeTransactions = Transaction::where('transaction_type_id', 1)
+        ->with('category')
+        ->get();
+
+    $data = $incomeTransactions->groupBy('category.name')->map(function ($transactions, $category) {
+        return [
+            'category' => $category,
+            // date
+            'amount' => $transactions->sum('amount')
+        ];
+    })->values();
+
+    return response()->json($data);
+    }
+
 
     /**
      * Show the form for editing the specified resource.

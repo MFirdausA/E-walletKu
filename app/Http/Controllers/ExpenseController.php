@@ -76,7 +76,26 @@ class ExpenseController extends Controller
      */
     public function show()
     {
-        return view('pages.expense.detail');
+        $transactions = transaction::where('transaction_type_id', 4)->get();
+        $expense =  TransactionType::where('name', 'Expense')->first();
+        $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
+        return view('pages.expense.detail', compact('transactions', 'expenseAmount'));
+    }
+
+    public function expenseChart()
+    {
+    $expenseTransactions = Transaction::where('transaction_type_id', 4)
+        ->with('category')
+        ->get();
+
+    $data = $expenseTransactions->groupBy('category.name')->map(function ($transactions, $category) {
+        return [
+            'category' => $category,
+            'amount' => $transactions->sum('amount')
+        ];
+    })->values();
+
+    return response()->json($data);
     }
 
     /**
