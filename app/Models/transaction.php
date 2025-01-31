@@ -37,14 +37,14 @@ class transaction extends Model
         return $this->belongsTo(Wallet::class);
     }
 
-    public function transactionTypes()
-    {
-        return $this->belongsTo(TransactionType::class, 'transaction_type_id');
-    }
+    // public function transactionTypes()
+    // {
+    //     return $this->belongsTo(TransactionType::class, 'transaction_type_id');
+    // }
 
     public function transactionType()
     {
-        return $this->belongsTo(TransactionType::class);
+        return $this->belongsTo(TransactionType::class, 'transaction_type_id', 'id');
     }
 
     public function user()

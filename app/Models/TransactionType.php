@@ -23,7 +23,7 @@ class TransactionType extends Model
 
     public function transactions()
     {
-        return $this->hasMany(Transaction::class , 'transaction_type_id');
+        return $this->hasMany(Transaction::class , 'transaction_type_id', 'id');
     }
 
     public function plannedPayments()
