@@ -58,6 +58,8 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::group(["prefix" => "report", "as" => "report."], function () {
         Route::get('/', ['uses' => 'App\Http\Controllers\ReportController@index', 'as' => 'index']);
     });
+    // web.php
+    Route::get('/home/filter', [HomeController::class, 'filter'])->name('home.filter');
 });
 
 require __DIR__.'/auth.php';
