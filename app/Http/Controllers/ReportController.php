@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\transaction;
 use Illuminate\Http\Request;
+use App\Models\TransactionType;
 
 class ReportController extends Controller
 {
@@ -11,7 +13,45 @@ class ReportController extends Controller
      */
     public function index()
     {
-        return view('pages.report.index');
+        $income =  TransactionType::where('name', 'Income')->first();
+        $incomeAmount = transaction::where('transaction_type_id', $income->id)->sum('amount');
+        $expense =  TransactionType::where('name', 'Expense')->first();
+        $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
+        $totalAmount = $incomeAmount + $expenseAmount;
+        return view('pages.report.index', compact('incomeAmount', 'expenseAmount', 'totalAmount'));
+    }
+
+    public function incomeChart()
+    {
+    $incomeTransactions = Transaction::where('transaction_type_id', 1)
+        ->with('category')
+        ->get();
+
+    $data = $incomeTransactions->groupBy('category.name')->map(function ($transactions, $category) {
+        return [
+            'category' => $category,
+            // date
+            'amount' => $transactions->sum('amount')
+        ];
+    })->values();
+
+    return response()->json($data);
+    }
+
+    public function expenseChart()
+    {
+    $expenseTransactions = Transaction::where('transaction_type_id', 4)
+        ->with('category')
+        ->get();
+
+    $data = $expenseTransactions->groupBy('category.name')->map(function ($transactions, $category) {
+        return [
+            'category' => $category,
+            'amount' => $transactions->sum('amount')
+        ];
+    })->values();
+
+    return response()->json($data);
     }
 
     /**

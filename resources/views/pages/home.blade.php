@@ -247,7 +247,7 @@
                                         <label for="endDate" class="block text-sm font-medium text-gray-700">End Date</label>
                                         <input type="date" id="endDate" name="endDate" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     </div>
-                                    <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600">Apply Filter</button>
+                                    <button type="submit" class="w-full bg-[#FFA600] text-white py-2 px-4 rounded-md hover:bg-[#D97706]">Apply Filter</button>
                                 </div>
                             </form>
                         </div>
