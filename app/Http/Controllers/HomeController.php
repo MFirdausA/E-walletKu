@@ -15,13 +15,16 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $transactions = transaction::all();
+        $transactions = transaction::whereMonth('date', Carbon::now()->month)->get();
         $income =  TransactionType::where('name', 'Income')->first();
-        $incomeAmount = transaction::where('transaction_type_id', $income->id)->sum('amount');
+        $incomeAmount = transaction::where('transaction_type_id', $income->id)
+            ->whereMonth('date', Carbon::now()->month)
+            ->sum('amount');
         $expense =  TransactionType::where('name', 'Expense')->first();
-        $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
+        $expenseAmount = transaction::where('transaction_type_id', $expense->id)
+            ->whereMonth('date', Carbon::now()->month)
+            ->sum('amount');
         $amount = $incomeAmount - $expenseAmount;
-        // dd($incomeAmount, $expenseAmount, $amount);
         $categoryTransaction =  Category::pluck('name');
         $dateFormat =  carbon::now()->format('F d');
         $dateOfDay =  carbon::now()->format('l');

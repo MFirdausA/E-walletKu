@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
@@ -13,24 +14,31 @@ class ReportController extends Controller
      */
     public function index()
     {
-        $income =  TransactionType::where('name', 'Income')->first();
-        $incomeAmount = transaction::where('transaction_type_id', $income->id)->sum('amount');
-        $expense =  TransactionType::where('name', 'Expense')->first();
-        $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
+        $income = TransactionType::where('name', 'Income')->first();
+        $incomeAmount = transaction::where('transaction_type_id', $income->id)
+            ->whereMonth('date', Carbon::now()->month)
+            ->sum('amount');
+        $expense = TransactionType::where('name', 'Expense')->first();
+        $expenseAmount = transaction::where('transaction_type_id', $expense->id)
+            ->whereMonth('date', Carbon::now()->month)
+            ->sum('amount');
         $totalAmount = $incomeAmount + $expenseAmount;
         return view('pages.report.index', compact('incomeAmount', 'expenseAmount', 'totalAmount'));
     }
 
     public function incomeChart()
     {
+    $currentMonth = Carbon::now()->month;
+    $currentYear = Carbon::now()->year;
     $incomeTransactions = Transaction::where('transaction_type_id', 1)
+    ->whereMonth('date', $currentMonth)
+    ->whereYear('date', $currentYear)
         ->with('category')
         ->get();
-
+        
     $data = $incomeTransactions->groupBy('category.name')->map(function ($transactions, $category) {
         return [
             'category' => $category,
-            // date
             'amount' => $transactions->sum('amount')
         ];
     })->values();
@@ -41,6 +49,7 @@ class ReportController extends Controller
     public function expenseChart()
     {
     $expenseTransactions = Transaction::where('transaction_type_id', 4)
+        ->whereMonth('date', Carbon::now()->month)
         ->with('category')
         ->get();
 

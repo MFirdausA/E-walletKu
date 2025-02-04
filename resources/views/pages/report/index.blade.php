@@ -121,7 +121,7 @@
                         type: 'pie',
                         options3d: {
                             enabled: true,
-                            alpha: 45
+                            alpha: 35
                         }
                     },
                     title: {
@@ -130,7 +130,7 @@
                     plotOptions: {
                         pie: {
                             innerSize: 100,
-                            depth: 45
+                            depth: 35
                         }
                     },
                     series: [{

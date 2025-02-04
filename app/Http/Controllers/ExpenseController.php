@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\tag;
 use App\Models\wallet;
 use App\Models\category;
@@ -76,15 +77,20 @@ class ExpenseController extends Controller
      */
     public function show()
     {
-        $transactions = transaction::where('transaction_type_id', 4)->get();
+        $transactions = transaction::where('transaction_type_id', 4)
+        ->whereMonth('date', Carbon::now()->month)
+        ->get();
         $expense =  TransactionType::where('name', 'Expense')->first();
-        $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
+        $expenseAmount = transaction::where('transaction_type_id', $expense->id)
+        ->whereMonth('date', Carbon::now()->month)
+        ->sum('amount');
         return view('pages.expense.detail', compact('transactions', 'expenseAmount'));
     }
 
     public function expenseChart()
     {
     $expenseTransactions = Transaction::where('transaction_type_id', 4)
+        ->whereMonth('date', Carbon::now()->month)
         ->with('category')
         ->get();
 

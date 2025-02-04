@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\tag;
 use App\Models\wallet;
 use App\Models\category;
@@ -10,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\TransactionType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+
 class IncomeController extends Controller
 {
     /**
@@ -75,15 +77,25 @@ class IncomeController extends Controller
      */
     public function show()
     {
-        $transactions = transaction::where('transaction_type_id', 1)->get();
+        $transactions = transaction::where('transaction_type_id', 1)
+        ->whereMonth('date', Carbon::now()->month)
+        ->get();
         $income =  TransactionType::where('name', 'Income')->first();
-        $incomeAmount = transaction::where('transaction_type_id', $income->id)->sum('amount');
+        $incomeAmount = transaction::where('transaction_type_id', $income->id)
+        ->whereMonth('date', Carbon::now()->month)
+        ->sum('amount');
         return view('pages.income.detail', compact('transactions', 'incomeAmount'));
+    }
+
+    public function filter()
+    {
+        
     }
 
     public function incomeChart()
     {
     $incomeTransactions = Transaction::where('transaction_type_id', 1)
+        ->whereMonth('date', Carbon::now()->month)
         ->with('category')
         ->get();
 
