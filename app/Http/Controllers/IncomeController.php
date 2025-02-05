@@ -75,34 +75,56 @@ class IncomeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(Request $request)
     {
-        $transactions = transaction::where('transaction_type_id', 1)
-        ->whereMonth('date', Carbon::now()->month)
-        ->get();
-        $income =  TransactionType::where('name', 'Income')->first();
-        $incomeAmount = transaction::where('transaction_type_id', $income->id)
-        ->whereMonth('date', Carbon::now()->month)
-        ->sum('amount');
-        return view('pages.income.detail', compact('transactions', 'incomeAmount'));
-    }
 
-    public function filter()
-    {
-        
+        $filterType = $request->input('filterType');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        $query = Transaction::where('transaction_type_id', 1);
+        switch ($filterType) {
+            case 'daily':
+                $query->whereDate('date', Carbon::today('Asia/Jakarta'));
+                break;
+            case 'monthly':
+                $query->whereMonth('date', Carbon::now('Asia/Jakarta')->month);
+                break;
+            case 'yearly':
+                $query->whereYear('date', Carbon::now('Asia/Jakarta')->year);
+                break;
+            case 'custom':
+                if ($startDate && $endDate) {
+                    // Jika kedua tanggal diisi, gunakan whereBetween
+                    $query->whereBetween('date', [$startDate, $endDate]);
+                } elseif ($startDate) {
+                    // Jika hanya startDate diisi, cari transaksi setelah atau pada startDate
+                    $query->where('date', '>=', $startDate);
+                } elseif ($endDate) {
+                    // Jika hanya endDate diisi, cari transaksi sebelum atau pada endDate
+                    $query->where('date', '<=', $endDate);
+                }
+                break;
+        }
+
+
+        $transactions = $query->get();
+        $income =  TransactionType::where('name', 'Income')->first();
+        $incomeAmount = $query->sum('amount');
+
+        return view('pages.income.detail', compact('transactions', 'incomeAmount', 'filterType'));
     }
 
     public function incomeChart()
     {
     $incomeTransactions = Transaction::where('transaction_type_id', 1)
-        ->whereMonth('date', Carbon::now()->month)
+        // ->whereMonth('date', Carbon::now()->month)
         ->with('category')
         ->get();
 
     $data = $incomeTransactions->groupBy('category.name')->map(function ($transactions, $category) {
         return [
             'category' => $category,
-            // date
             'amount' => $transactions->sum('amount')
         ];
     })->values();

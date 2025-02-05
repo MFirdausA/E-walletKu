@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\ExpenseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ProfileController;
 
 
@@ -60,6 +62,9 @@ Route::middleware('auth', 'verified')->group(function () {
     });
     // web.php
     Route::get('/home/filter', [HomeController::class, 'filter'])->name('home.filter');
+    Route::get('/income/detail/filter', [IncomeController::class, 'show'])->name('income-detail.filter');
+    Route::get('/expense/detail/filter', [ExpenseController::class, 'show'])->name('expense-detail.filter');
+    Route::get('/report/filter', [ExpenseController::class, 'show'])->name('report.filter');
 });
 
 require __DIR__.'/auth.php';
