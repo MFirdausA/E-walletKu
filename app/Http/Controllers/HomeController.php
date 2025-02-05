@@ -15,14 +15,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $transactions = transaction::whereMonth('date', Carbon::now()->month)->get();
+        $transactions = transaction::whereMonth('date', Carbon::now('Asia/Jakarta')->month)->get();
         $income =  TransactionType::where('name', 'Income')->first();
         $incomeAmount = transaction::where('transaction_type_id', $income->id)
-            ->whereMonth('date', Carbon::now()->month)
+            ->whereMonth('date', Carbon::now('Asia/Jakarta')->month)
             ->sum('amount');
         $expense =  TransactionType::where('name', 'Expense')->first();
         $expenseAmount = transaction::where('transaction_type_id', $expense->id)
-            ->whereMonth('date', Carbon::now()->month)
+            ->whereMonth('date', Carbon::now('Asia/Jakarta')->month)
             ->sum('amount');
         $amount = $incomeAmount - $expenseAmount;
         $categoryTransaction =  Category::pluck('name');
@@ -71,16 +71,15 @@ class HomeController extends Controller
             break;
     }
 
-    $transactions = $query->get();
-    $income =  TransactionType::where('name', 'Income')->first();
-        $incomeAmount = transaction::where('transaction_type_id', $income->id)->sum('amount');
+        $transactions = $query->get();
+        $income =  TransactionType::where('name', 'Income')->first();
+        $incomeAmount = $transactions->where('transaction_type_id', $income->id)->sum('amount');
         $expense =  TransactionType::where('name', 'Expense')->first();
-        $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
+        $expenseAmount = $transactions->where('transaction_type_id', $expense->id)->sum('amount');
         $amount = $incomeAmount - $expenseAmount;
         $categoryTransaction =  Category::pluck('name');
-        $dateFormat =  Carbon::now('Asia/Jakarta')->format('F d');
-        $dateOfDay =  Carbon::now('Asia/Jakarta')->format('l');
-    // Return the filtered transactions to the view
+        $dateFormat =  carbon::now()->format('F d');
+        $dateOfDay =  carbon::now()->format('l');
     return view('pages.home', [
         'transactions' => $transactions,
         'amount' => $amount,
@@ -89,7 +88,6 @@ class HomeController extends Controller
         'categoryTransaction' => $categoryTransaction,
         'dateFormat' => $dateFormat,
         'dateOfDay' => $dateOfDay,
-        // Other data you want to pass to the view
     ]);
     }
 
