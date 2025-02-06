@@ -53,7 +53,8 @@
             </div>
             <div class="mt-3">
                 <x-input-label for="Wallet" :value="__('Wallet')" />
-                <select id="wallet_id" name="wallet_id" type="select" class="mt-1 block w-full border-gray-300 text-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"  autofocus autocomplete="Payment Method" >
+                <p id="remainingBalanceText" class="text-green-600 text-sm hidden"></p>
+                <select id="wallet_id" name="wallet_id" type="select" data-selected="{{ old('wallet_id') }}" class="mt-1 block w-full border-gray-300 text-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"  autofocus autocomplete="Payment Method" >
                     <option value="" disabled selected>Select Wallet</option>
                     @foreach ($wallets as $wallet)
                         <option value="{{ $wallet->id }}" {{ old('wallet_id') == $wallet->id ? 'selected' : '' }}>{{ Str::title($wallet->name) }}</option>
@@ -113,6 +114,33 @@ button.addEventListener('click', () => {
 });
 });
 });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    let wallets = @json($wallets);
+    let walletSelect = document.getElementById("wallet_id");
+    let remainingBalanceText = document.getElementById("remainingBalanceText");
 
+    // Sembunyikan teks jika tidak ada wallet yang dipilih
+    remainingBalanceText.style.display = "none";
+
+    function updateRemainingBalance() {
+        let selectedWallet = wallets.find(wallet => wallet.id == walletSelect.value);
+        if (selectedWallet) {
+            remainingBalanceText.textContent = `Balance: Rp ${new Intl.NumberFormat('id-ID').format(selectedWallet.remainingBalance)}`;
+            remainingBalanceText.style.display = "block";
+        } else {
+            remainingBalanceText.style.display = "none";
+        }
+    }
+
+    // Tambahkan event listener untuk update balance saat wallet dipilih
+    walletSelect.addEventListener("change", updateRemainingBalance);
+
+    // Jalankan saat halaman dimuat jika wallet_id sebelumnya terisi (old value)
+    if (walletSelect.dataset.selected) {
+        updateRemainingBalance();
+    }
+});
 </script>
 @endsection

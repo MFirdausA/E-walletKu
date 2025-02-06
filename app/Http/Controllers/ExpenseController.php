@@ -9,6 +9,7 @@ use App\Models\category;
 use App\Models\transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
+use App\Models\transfer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -28,7 +29,25 @@ class ExpenseController extends Controller
     public function create()
     {
         $user = Auth::user()->id;
-        $wallets = wallet::all();
+        $wallets = Wallet::all()->map(function ($wallet) {
+            $incomeAmount = Transaction::where('wallet_id', $wallet->id)
+                ->whereHas('transactionType', function ($query) {
+                    $query->where('name', 'Income');
+                })
+                ->sum('amount');
+    
+            $expenseAmount = Transaction::where('wallet_id', $wallet->id)
+                ->whereHas('transactionType', function ($query) {
+                    $query->where('name', 'Expense');
+                })
+                ->sum('amount');
+            
+            $transferIn = Transfer::where('to_wallet_id', $wallet->id)->sum('amount');
+            $transferOut = Transfer::where('wallet_id', $wallet->id)->sum('amount');
+            
+            $wallet->remainingBalance = ($incomeAmount - $expenseAmount) + ($transferIn - $transferOut);
+            return $wallet;
+        });
         $categories = category::all();
         $tags = tag::all();
         $transactionType = TransactionType::all();
@@ -42,7 +61,6 @@ class ExpenseController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user()->id;
 
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:255',
@@ -50,12 +68,34 @@ class ExpenseController extends Controller
             'date' => 'required|date',
             'wallet_id' => 'required',
             'user_id'=>'required',
-            'amount' => 'required',
+            'amount' => 'required|',
         ]);
         if ($validator->fails()) {
             return redirect()->back()
             ->withErrors($validator)
             ->withInput();
+        }
+
+        $wallet = Wallet::findOrFail($request->wallet_id);
+        $incomeAmount = Transaction::where('wallet_id', $wallet->id)
+            ->whereHas('transactionType', function ($query) {
+                $query->where('name', 'Income');
+            })
+            ->sum('amount');
+
+        $expenseAmount = Transaction::where('wallet_id', $wallet->id)
+            ->whereHas('transactionType', function ($query) {
+                $query->where('name', 'Expense');
+            })
+            ->sum('amount');
+
+        $transferIn = Transfer::where('to_wallet_id', $wallet->id)->sum('amount');
+        $transferOut = Transfer::where('wallet_id', $wallet->id)->sum('amount');
+
+        $remainingBalance = ($incomeAmount - $expenseAmount) + ($transferIn - $transferOut);
+
+        if ($request->amount > $remainingBalance) {
+            return redirect()->back()->withErrors(['amount' => 'The balance is not enough'])->withInput();;
         }
 
         transaction::create([
