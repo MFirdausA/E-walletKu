@@ -92,7 +92,7 @@
     </div>
     <div class="mt-4">
         <figure class="highcharts-figure">
-            <div id="container"></div>
+            <div id="incomeChart"></div>
             <div class="p-2 bg-white rounded-b-[8px] border-t">
                 <a href="{{ route('income.show')}}" class="text-black hover:text-[#ffa500]">details</a>
             </div>
@@ -100,7 +100,7 @@
     </div>
     <div class="mt-4">
         <figure class="highcharts-figure">
-            <div id="container1"></div>
+            <div id="expenseChart"></div>
             <div class="p-2 bg-white rounded-b-[8px] border-t">
                 <a href="{{ route('expense.show')}}" class="text-black hover:text-[#ffa500]">details</a>
             </div>
@@ -117,7 +117,7 @@
                     <div class="flex justify-center items-center p-2 mb-2">Filter Transactions</div>
                 </div>
                 <div class="flex-col">
-                    <form id="filterForm" action="{{ route('report.filter') }}" method="GET">
+                    <form id="filterForm" action="{{ route('report.index') }}" method="GET">
                         <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label for="filterType" class="block text-sm font-medium text-gray-700">Filter Type</label>
@@ -145,71 +145,30 @@
         </div>
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        fetch('/api/income-chart')
-            .then(response => response.json())
-            .then(data => {
-                const chartData = data.map(item => [item.category, item.amount]);
+        const incomeData = @json($incomeData);
+        const expenseData = @json($expenseData);
 
-                Highcharts.chart('container', {
-                    chart: {
-                        type: 'pie',
-                        options3d: {
-                            enabled: true,
-                            alpha: 35
-                        }
-                    },
-                    title: {
-                        text: 'Income'
-                    },
-                    plotOptions: {
-                        pie: {
-                            innerSize: 100,
-                            depth: 35
-                        }
-                    },
-                    series: [{
-                        name: 'Amount',
-                        data: chartData
-                    }]
-                });
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        fetch('/api/expense-chart')
-            .then(response => response.json())
-            .then(data => {
-                const chartData = data.map(item => [item.category, item.amount]);
+        Highcharts.chart('incomeChart', {
+            chart: { type: 'pie', options3d: { enabled: true, alpha: 45 } },
+            title: { text: 'Income by Category' },
+            plotOptions: { pie: { innerSize: 100, depth: 45 } },
+            series: [{
+                name: 'Amount',
+                data: incomeData.map(item => [item.category, item.amount])
+            }]
+        });
 
-                Highcharts.chart('container1', {
-                    chart: {
-                        type: 'pie',
-                        options3d: {
-                            enabled: true,
-                            alpha: 35
-                        }
-                    },
-                    title: {
-                        text: 'Expense'
-                    },
-                    plotOptions: {
-                        pie: {
-                            innerSize: 100,
-                            depth: 35
-                        }
-                    },
-                    series: [{
-                        name: 'Amount',
-                        data: chartData
-                    }]
-                });
-            })
-            .catch(error => console.error('Error fetching data:', error));
+        Highcharts.chart('expenseChart', {
+            chart: { type: 'pie', options3d: { enabled: true, alpha: 45 } },
+            title: { text: 'Expense by Category' },
+            plotOptions: { pie: { innerSize: 100, depth: 45 } },
+            series: [{
+                name: 'Amount',
+                data: expenseData.map(item => [item.category, item.amount])
+            }]
+        });
     });
 </script>
 <script>

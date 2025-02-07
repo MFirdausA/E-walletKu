@@ -12,55 +12,64 @@ class ReportController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $income = TransactionType::where('name', 'Income')->first();
-        $incomeAmount = transaction::where('transaction_type_id', $income->id)
-            ->whereMonth('date', Carbon::now()->month)
-            ->sum('amount');
-        $expense = TransactionType::where('name', 'Expense')->first();
-        $expenseAmount = transaction::where('transaction_type_id', $expense->id)
-            ->whereMonth('date', Carbon::now()->month)
-            ->sum('amount');
-        $totalAmount = $incomeAmount + $expenseAmount;
-        return view('pages.report.index', compact('incomeAmount', 'expenseAmount', 'totalAmount'));
-    }
-
-    public function incomeChart()
-    {
-    $currentMonth = Carbon::now()->month;
-    $currentYear = Carbon::now()->year;
-    $incomeTransactions = Transaction::where('transaction_type_id', 1)
-    ->whereMonth('date', $currentMonth)
-    ->whereYear('date', $currentYear)
-        ->with('category')
-        ->get();
-        
-    $data = $incomeTransactions->groupBy('category.name')->map(function ($transactions, $category) {
-        return [
-            'category' => $category,
-            'amount' => $transactions->sum('amount')
-        ];
-    })->values();
-
-    return response()->json($data);
-    }
-
-    public function expenseChart()
-    {
-    $expenseTransactions = Transaction::where('transaction_type_id', 4)
-        ->whereMonth('date', Carbon::now()->month)
-        ->with('category')
-        ->get();
-
-    $data = $expenseTransactions->groupBy('category.name')->map(function ($transactions, $category) {
-        return [
-            'category' => $category,
-            'amount' => $transactions->sum('amount')
-        ];
-    })->values();
-
-    return response()->json($data);
+        $filterType = $request->input('filterType', 'monthly');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+    
+        $incomeType = TransactionType::where('name', 'Income')->first();
+        $expenseType = TransactionType::where('name', 'Expense')->first();
+    
+        $query = Transaction::query();
+    
+        switch ($filterType) {
+            case 'daily':
+                $query->whereDate('date', Carbon::today('Asia/Jakarta'));
+                break;
+            case 'monthly':
+                $query->whereMonth('date', Carbon::now('Asia/Jakarta')->month);
+                break;
+            case 'yearly':
+                $query->whereYear('date', Carbon::now('Asia/Jakarta')->year);
+                break;
+            case 'custom':
+                if ($startDate && $endDate) {
+                    $query->whereBetween('date', [$startDate, $endDate]);
+                } elseif ($startDate) {
+                    $query->where('date', '>=', $startDate);
+                } elseif ($endDate) {
+                    $query->where('date', '<=', $endDate);
+                }
+                break;
+        }
+    
+        $incomeAmount = (clone $query)->where('transaction_type_id', $incomeType->id)->sum('amount');
+        $expenseAmount = (clone $query)->where('transaction_type_id', $expenseType->id)->sum('amount');
+        $totalAmount = $incomeAmount - $expenseAmount;
+    
+        // Grouping data for charts
+        $incomeData = (clone $query)->where('transaction_type_id', $incomeType->id)
+            ->get()
+            ->groupBy('category.name')
+            ->map(function ($transactions, $category) {
+                return [
+                    'category' => $category,
+                    'amount' => $transactions->sum('amount')
+                ];
+            })->values();
+    
+        $expenseData = (clone $query)->where('transaction_type_id', $expenseType->id)
+            ->get()
+            ->groupBy('category.name')
+            ->map(function ($transactions, $category) {
+                return [
+                    'category' => $category,
+                    'amount' => $transactions->sum('amount')
+                ];
+            })->values();
+    
+        return view('pages.report.index', compact('incomeAmount', 'expenseAmount', 'totalAmount', 'incomeData', 'expenseData', 'filterType'));
     }
 
     /**

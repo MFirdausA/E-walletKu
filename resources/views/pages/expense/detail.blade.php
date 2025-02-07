@@ -119,7 +119,7 @@
                     <div class="flex justify-center items-center p-2 mb-2">Filter Transactions</div>
                 </div>
                 <div class="flex-col">
-                    <form id="filterForm" action="{{ route('expense-detail.filter') }}" method="GET">
+                    <form id="filterForm" action="{{ route('expense.show') }}" method="GET">
                         <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label for="filterType" class="block text-sm font-medium text-gray-700">Filter Type</label>
@@ -147,38 +147,32 @@
         </div>
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        fetch('/api/expense-chart')
-            .then(response => response.json())
-            .then(data => {
-                const chartData = data.map(item => [item.category, item.amount]);
+        const chartData = @json($data);
 
-                Highcharts.chart('container', {
-                    chart: {
-                        type: 'pie',
-                        options3d: {
-                            enabled: true,
-                            alpha: 35
-                        }
-                    },
-                    title: {
-                        text: 'Expense Category'
-                    },
-                    plotOptions: {
-                        pie: {
-                            innerSize: 100,
-                            depth: 35
-                        }
-                    },
-                    series: [{
-                        name: 'Amount',
-                        data: chartData
-                    }]
-                });
-            })
-            .catch(error => console.error('Error fetching data:', error));
+        Highcharts.chart('container', {
+            chart: {
+                type: 'pie',
+                options3d: {
+                    enabled: true,
+                    alpha: 45
+                }
+            },
+            title: {
+                text: 'expense Category'
+            },
+            plotOptions: {
+                pie: {
+                    innerSize: 100,
+                    depth: 45
+                }
+            },
+            series: [{
+                name: 'Amount',
+                data: chartData.map(item => [item.category, item.amount])
+            }]
+        });
     });
 </script>
 <script>

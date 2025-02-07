@@ -77,12 +77,12 @@ class IncomeController extends Controller
      */
     public function show(Request $request)
     {
-
         $filterType = $request->input('filterType');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
-
+    
         $query = Transaction::where('transaction_type_id', 1);
+    
         switch ($filterType) {
             case 'daily':
                 $query->whereDate('date', Carbon::today('Asia/Jakarta'));
@@ -95,41 +95,27 @@ class IncomeController extends Controller
                 break;
             case 'custom':
                 if ($startDate && $endDate) {
-                    // Jika kedua tanggal diisi, gunakan whereBetween
                     $query->whereBetween('date', [$startDate, $endDate]);
                 } elseif ($startDate) {
-                    // Jika hanya startDate diisi, cari transaksi setelah atau pada startDate
                     $query->where('date', '>=', $startDate);
                 } elseif ($endDate) {
-                    // Jika hanya endDate diisi, cari transaksi sebelum atau pada endDate
                     $query->where('date', '<=', $endDate);
                 }
                 break;
         }
-
-
+    
         $transactions = $query->get();
-        $income =  TransactionType::where('name', 'Income')->first();
         $incomeAmount = $query->sum('amount');
-
-        return view('pages.income.detail', compact('transactions', 'incomeAmount', 'filterType'));
-    }
-
-    public function incomeChart()
-    {
-    $incomeTransactions = Transaction::where('transaction_type_id', 1)
-        // ->whereMonth('date', Carbon::now()->month)
-        ->with('category')
-        ->get();
-
-    $data = $incomeTransactions->groupBy('category.name')->map(function ($transactions, $category) {
-        return [
-            'category' => $category,
-            'amount' => $transactions->sum('amount')
-        ];
-    })->values();
-
-    return response()->json($data);
+    
+        // chart data
+        $data = $transactions->groupBy('category.name')->map(function ($transactions, $category) {
+            return [
+                'category' => $category,
+                'amount' => $transactions->sum('amount')
+            ];
+        })->values();
+    
+        return view('pages.income.detail', compact('transactions', 'incomeAmount', 'filterType', 'data'));
     }
 
 
