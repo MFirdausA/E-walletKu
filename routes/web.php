@@ -6,7 +6,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ProfileController;
 
-
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -61,6 +60,8 @@ Route::middleware('auth', 'verified')->group(function () {
         Route::get('/', ['uses' => 'App\Http\Controllers\ReportController@index', 'as' => 'index']);
     });
     // web.php
+    Route::get('/transaction-detail', ['uses' => 'App\Http\Controllers\TransactionDetailController@TransactionDetail', 'as' => 'pages.transaction-detail']);
+    Route::get('/transaction-save', ['uses' => 'App\Http\Controllers\TransactionDetailController@TransactionSave', 'as' => 'pages.transaction-save']);
     Route::get('/home/filter', [HomeController::class, 'filter'])->name('home.filter');
     Route::get('/report/filter', [ExpenseController::class, 'show'])->name('report.filter');
 });
