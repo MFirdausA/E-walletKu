@@ -8,6 +8,7 @@ use App\Models\transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class WalletController extends Controller
 {
@@ -67,7 +68,26 @@ class WalletController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = Auth::user()->id;
+        $request->merge([
+            'user_id' => $user,
+        ]);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'cover' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048|dimensions:max_width=16,max_height=16',
+            'user_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+        }
+        wallet::create([
+            'name' => $request->name,
+            'cover' => $request->cover,
+            'user_id' => $request->user_id
+        ]);
+        return redirect()->route('wallet.create')->with('success', 'Wallet created successfully');
     }
 
     /**
@@ -91,7 +111,23 @@ class WalletController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $wallet = wallet::findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'cover' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048|dimensions:max_width=16,max_height=16',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+        }
+        $wallet->update([
+            'name' => $request->name,
+            'cover' => $request->cover,
+        ]);
+        return redirect()->route('wallet.create')->with('success', 'Wallet updated successfully');
     }
 
     /**
@@ -99,6 +135,7 @@ class WalletController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        wallet::destroy($id);
+        return redirect()->route('wallet.create')->with('success', 'Wallet deleted successfully');
     }
 }

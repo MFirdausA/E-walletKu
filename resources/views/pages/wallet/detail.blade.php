@@ -3,12 +3,14 @@
 
 <div class="container p-6">
     <div class="font-bold flex justify-center items-center text-xl">ACCOUNT</div>
-    <a href="{{ route('home.index') }}" class="w-full flex justify-between items-center mt-4">
-            <img class="w-4" src="{{ asset('img/back.svg') }}" alt="back">
-        <div class="w-[42px] h-[42px] px-2 bg-[#ffa500] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
+    <div class="w-full flex justify-between items-center mt-4">
+        <a href="{{ route('home.index') }}" class="w-full flex justify-between items-center">
+                <img class="w-4" src="{{ asset('img/back.svg') }}" alt="back">
+        </a>
+        <button class="w-[45px] h-[42px] px-2 bg-[#ffa500] rounded-full justify-center items-center gap-2.5 inline-flex">
             <div class="text-center text-white text-xl font-normal font-['Poppins']">+</div>
-        </div>
-    </a>
+        </button>
+    </div>
     <div class="bg-white rounded-xl py-3 justify-around items-center mt-[32px] flex">
         <div class="items-center text-wrap">
             <div class="text-black font-bold">income this month</div>
