@@ -20,7 +20,8 @@ class PlannedController extends Controller
      */
     public function index()
     {
-        $plannedPayments = plannedPayment::all();
+        $user = Auth::user()->id;
+        $plannedPayments = plannedPayment::where('user_id', $user)->orderBy('created_at', 'desc')->get();
         $amount = plannedPayment::sum('amount');
         return view('pages.planned-payment.index', compact(
             'plannedPayments',
@@ -41,17 +42,17 @@ class PlannedController extends Controller
         // dd($status);
         $repeatTypes = repeatType::all();
         $transactionType = TransactionType::all();
-        $plannedIncome = $transactionType->firstWhere('id', 5)->name;
-        $plannedExpense = $transactionType->firstWhere('id', 1)->name;
+        $transactionid = $transactionType->firstWhere('id', 6)->id;
         $transactionName = $transactionType->firstWhere('id', 6)->name;
         return view('pages.planned-payment.create', compact(
         'wallets', 
         'categories', 
         'tags', 
+        'transactionid',
         'transactionType', 
         'transactionName', 
-        'plannedIncome', 
-        'plannedExpense', 
+        // 'plannedIncome', 
+        // 'plannedExpense', 
         'user', 
         'repeatTypes',
         'status'
@@ -70,6 +71,7 @@ class PlannedController extends Controller
             'description' => 'required|max:255',
             'start_date' => 'required|date',
             'transaction_type_id' => 'required',
+            'planned_transaction_type_id' => 'required',
             'wallet_id' => 'required',
             'amount' => 'required',
             'category_id' => 'required',
@@ -88,6 +90,7 @@ class PlannedController extends Controller
             'description' => $request->description,
             'start_date' => $request->start_date,
             'transaction_type_id' => $request->transaction_type_id,
+            'planned_transaction_type_id' => $request->planned_transaction_type_id,
             'wallet_id' => $request->wallet_id,
             'amount' => $request->amount,
             'category_id' => $request->category_id,
@@ -112,7 +115,32 @@ class PlannedController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $plannedPayments = plannedPayment::find($id);
+        $user = Auth::user()->id;
+        $wallets = wallet::all();
+        $categories = category::all();
+        $tags = tag::all();
+        $status = status::firstWhere('id', 1)->id;
+        // dd($status);
+        $repeatTypes = repeatType::all();
+        $transactionType = TransactionType::all();
+        $transactionid = $transactionType->firstWhere('id', 6)->id;
+        $transactionName = $transactionType->firstWhere('id', 6)->name;
+        return view('pages.planned-payment.edit', compact(
+            'id',
+            'plannedPayments',
+            'wallets', 
+            'categories', 
+            'tags', 
+            'transactionid',
+            'transactionType', 
+            'transactionName', 
+            // 'plannedIncome', 
+            // 'plannedExpense', 
+            'user', 
+            'repeatTypes',
+            'status'
+        ));
     }
 
     /**
@@ -120,7 +148,41 @@ class PlannedController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $plannedPayments = plannedPayment::find($id);
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:255',
+            'description' => 'required|max:255',
+            'start_date' => 'required|date',
+            'transaction_type_id' => 'required',
+            'planned_transaction_type_id' => 'required',
+            'wallet_id' => 'required',
+            'amount' => 'required',
+            'category_id' => 'required',
+            'status_id' => 'required',
+            'repeat_type_id' => 'required',
+            'repeat_count' => 'required|min:1',
+            'user_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+        }
+        $plannedPayments->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'start_date' => $request->start_date,
+            'transaction_type_id' => $request->transaction_type_id,
+            'planned_transaction_type_id' => $request->planned_transaction_type_id,
+            'wallet_id' => $request->wallet_id,
+            'amount' => $request->amount,
+            'category_id' => $request->category_id,
+            'status_id' => $request->status_id,
+            'repeat_type_id' => $request->repeat_type_id,
+            'repeat_count' => $request->repeat_count,
+            'user_id' => $request->user_id,
+        ]);
+        return redirect()->route('home.index');
     }
 
     /**
@@ -128,6 +190,8 @@ class PlannedController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $plannedPayments = plannedPayment::find($id);
+        $plannedPayments->delete();
+        return redirect()->route('home.index')->with('success', 'Transaction deleted successfully');
     }
 }

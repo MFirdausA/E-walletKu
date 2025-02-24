@@ -25,6 +25,7 @@
             @csrf
             <input type="hidden" name="user_id" value="{{ $user }}">
             <input type="hidden" name="status_id" value="{{ $status }}">
+            <input type="hidden" name="transaction_type_id" value="{{ $transactionid }}">
             <div class="">
                 <x-input-label for="Title" :value="__('Title')" />
                 <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" :value="old('title')" autofocus autocomplete="title" />
@@ -69,12 +70,12 @@
                             <div class="flex justify-center items-center p-2 mb-2">Plan for</div>
                         </div>
                         <div class="mt-3">
-                            <select id="repeat" name="transaction_type_id" class="border w-full border-[#ffa500] py-2 my-1 rounded-lg">
+                            <select id="repeat" name="planned_transaction_type_id" class="border w-full border-[#ffa500] py-2 my-1 rounded-lg">
                                 <option value="" disabled selected>Select Type Transaction</option>
-                                <option value="1" {{ old('transaction_type_id') == 1 ? 'selected' : '' }}>Income</option>
-                                <option value="1" {{ old('transaction_type_id') == 4 ? 'selected' : '' }}>Expense</option>
+                                <option value="1" {{ old('planned_transaction_type_id') == 1 ? 'selected' : '' }}>Income</option>
+                                <option value="4" {{ old('planned_transaction_type_id') == 4 ? 'selected' : '' }}>Expense</option>
                             </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('transaction_type_id')" />
+                            <x-input-error class="mt-2" :messages="$errors->get('planned_transaction_type_id')" />
                         </div>
                         <div class="mt-3">
                             <x-input-label for="Start date" :value="__('Start date')" />
