@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -11,7 +13,11 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return view('pages.category.index');
+        $user = Auth::user()->id;
+        $categories = category::whereNull('user_id')->orWhere('user_id', $user)->get();
+        return view('pages.category.index', compact(
+            'categories'
+        ));
     }
 
     /**
@@ -27,7 +33,17 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|unique:categories|max:15',
+            // 'cover' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048|dimensions:max_width=16,max_height=16'
+        ]);
+    
+        $category = Category::create($validated);
+    
+        return response()->json([
+            'success' => true,
+            'category' => $category
+        ]);
     }
 
     /**
@@ -43,7 +59,7 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        
     }
 
     /**
@@ -51,7 +67,15 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|unique:categories,name,'.$id.'|max:255',
+            // 'cover' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048|dimensions:max_width=16,max_height=16'
+        ]);
+    
+        $category = Category::findOrFail($id);
+        $category->update($validated);
+    
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -59,6 +83,9 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $category = Category::findOrFail($id);
+        $category->delete();
+
+    return response()->json(['success' => true]);
     }
 }
