@@ -20,8 +20,8 @@
     <div class=" w-full flex flex-col bg-white mt-6">
         <form action="{{ route('income.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <input type="hidden" name="transaction_type_id" value="{{ $transactionid }}">
-            <input type="hidden" name="user_id" value="{{ $user }}">
+            {{-- <input type="hidden" name="transaction_type_id" value="{{ $transactionid }}">
+            <input type="hidden" name="user_id" value="{{ $user }}"> --}}
             <div class="mt-3">
                 <x-input-label for="Title" :value="__('Title')" />
                 <x-text-input id="Title" name="title" type="text" class="mt-1 block w-full" :value="old('title')"  autofocus autocomplete="Title" />

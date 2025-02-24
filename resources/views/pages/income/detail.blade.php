@@ -81,6 +81,7 @@
     </figure>
     <section>
         @foreach ($transactions as $transaction)
+        <a href="{{route('pages.transaction-detail', ['id' => $transaction->id, 'from' => 'detail-income'])}}">
             <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
                 <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
                     <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
@@ -107,6 +108,7 @@
                     </div>
                 </div>
             </div>
+        </a>
         @endforeach
     </section>
     <!-- Modal Filter -->

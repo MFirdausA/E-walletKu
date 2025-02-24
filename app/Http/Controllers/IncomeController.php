@@ -34,6 +34,8 @@ class IncomeController extends Controller
         $transactionType = TransactionType::all();
         $transactionName = $transactionType->firstWhere('id', 1)->name;
         $transactionid = $transactionType->firstWhere('id', 1)->id;
+
+        session(['transaction_type_id' => $transactionid, 'user_id' => $user]);
         return view('pages.income.create',compact('wallets', 'categories', 'tags', 'transactionType', 'transactionName', 'transactionid','user'));    
     }
 
@@ -42,8 +44,11 @@ class IncomeController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user()->id;
-
+        $request->merge([
+            'transaction_type_id' => session('transaction_type_id'),
+            'user_id' => session('user_id'),
+        ]);
+    
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:255',
             'description' => 'required|max:255',
@@ -57,7 +62,6 @@ class IncomeController extends Controller
             ->withErrors($validator)
             ->withInput();
         }
-
         transaction::create([
             'title' => $request->title,
             'transaction_type_id' => $request->transaction_type_id,
@@ -77,11 +81,13 @@ class IncomeController extends Controller
      */
     public function show(Request $request)
     {
+        $user = Auth::user()->id;
+        $from = $request->from;
         $filterType = $request->input('filterType');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
     
-        $query = Transaction::where('transaction_type_id', 1);
+        $query = Transaction::where('transaction_type_id', 1)->where('user_id', $user)->orderBy('date', 'desc');
     
         switch ($filterType) {
             case 'daily':
@@ -115,16 +121,25 @@ class IncomeController extends Controller
             ];
         })->values();
     
-        return view('pages.income.detail', compact('transactions', 'incomeAmount', 'filterType', 'data'));
+        return view('pages.income.detail', compact('transactions', 'incomeAmount', 'filterType', 'data', 'from'));
     }
 
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id, Request $request)
     {
-        //
+        $transaction = Transaction::find($id);
+        // dd($transaction->tag_id);
+        $user = Auth::user()->id;
+        $wallets = wallet::all();
+        $categories = category::all();
+        $tags = tag::all();
+        $transactionType = TransactionType::all();
+        $transactionName = $transactionType->firstWhere('id', 1)->name;
+        $transactionid = $transactionType->firstWhere('id', 1)->id;
+        return view('pages.income.edit', compact('id','transaction', 'wallets', 'categories', 'tags', 'transactionType', 'transactionName', 'transactionid', 'user'));
     }
 
     /**
@@ -132,7 +147,34 @@ class IncomeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $transaction = transaction::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:255',
+            'description' => 'required|max:255',
+            'date' => 'required|date',
+            'wallet_id' => 'required',
+            'user_id' => 'required',
+            'amount' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+        }
+
+        $transaction->update([
+            'title' => $request->title,
+            'transaction_type_id' => $request->transaction_type_id,
+            'description' => $request->description,
+            'date' => $request->date,
+            'wallet_id' => $request->wallet_id,
+            'amount' => $request->amount,
+            'category_id' => $request->category_id,
+            'tag_id' => $request->tag_id,
+            'user_id' => $request->user_id,
+        ]);
+        
+        return redirect()->route('home.index')->with('success', 'Transaction updated successfully');
     }
 
     /**
@@ -140,6 +182,8 @@ class IncomeController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $transaction = Transaction::findOrFail($id);
+        $transaction->delete();
+        return redirect()->route('home.index')->with('success', 'Transaction deleted successfully');
     }
 }
