@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
@@ -14,14 +15,16 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        $filterType = $request->input('filterType', 'monthly');
+        $user = Auth::user()->id;
+
+        $filterType = $request->input('filterType'); //bisa tambahin default value '','value'
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
     
         $incomeType = TransactionType::where('name', 'Income')->first();
         $expenseType = TransactionType::where('name', 'Expense')->first();
     
-        $query = Transaction::query();
+        $query = Transaction::query()->where('user_id', $user);
     
         switch ($filterType) {
             case 'daily':
@@ -44,12 +47,13 @@ class ReportController extends Controller
                 break;
         }
     
-        $incomeAmount = (clone $query)->where('transaction_type_id', $incomeType->id)->sum('amount');
-        $expenseAmount = (clone $query)->where('transaction_type_id', $expenseType->id)->sum('amount');
+        $incomeAmount = (clone $query)->where('transaction_type_id', $incomeType->id)->where('user_id', $user)->sum('amount');
+        $expenseAmount = (clone $query)->where('transaction_type_id', $expenseType->id)->where('user_id', $user)->sum('amount');
         $totalAmount = $incomeAmount - $expenseAmount;
     
         // Grouping data for charts
         $incomeData = (clone $query)->where('transaction_type_id', $incomeType->id)
+            ->where('user_id', $user)
             ->get()
             ->groupBy('category.name')
             ->map(function ($transactions, $category) {
@@ -60,6 +64,7 @@ class ReportController extends Controller
             })->values();
     
         $expenseData = (clone $query)->where('transaction_type_id', $expenseType->id)
+            ->where('user_id', $user)
             ->get()
             ->groupBy('category.name')
             ->map(function ($transactions, $category) {
