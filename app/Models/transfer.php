@@ -20,7 +20,8 @@ class transfer extends Model
         'to_wallet_id', 
         'fee', 
         'amount', 
-        'user_id'
+        'user_id',
+        'transaction_type_id',
     ];
 
     public function category()
@@ -46,5 +47,10 @@ class transfer extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function transactionType()
+    {
+        return $this->belongsTo(TransactionType::class, 'transaction_type_id', 'id');
     }
 }

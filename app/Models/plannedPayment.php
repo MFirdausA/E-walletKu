@@ -14,7 +14,8 @@ class plannedPayment extends Model
         'title', 
         'description', 
         'start_date', 
-        'transaction_type_id', 
+        'transaction_type_id',
+        'planned_transaction_type_id',
         'wallet_id', 
         'amount', 
         'category_id', 
@@ -26,7 +27,12 @@ class plannedPayment extends Model
 
     public function transactionType()
     {
-        return $this->belongsTo(TransactionType::class, 'transaction_type_id');
+        return $this->belongsTo(TransactionType::class, 'transaction_type_id', 'id');
+    }
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class , 'transaction_type_id', 'id');
     }
 
     public function category()
