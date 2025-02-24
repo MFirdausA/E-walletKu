@@ -2,7 +2,7 @@
 @section('content')
 <div class="container p-6 min-h-screen bg-white">
 
-    <div class="font-bold flex justify-center items-center text-xl">Transfer </div>
+    <div class="font-bold flex justify-center items-center text-xl">Update Transfer</div>
     <div class="w-full flex justify-between items-center mt-4">
         <a href="{{ route('home.index') }}">
             <img class="w-4" src="{{ asset('img/back.svg') }}" alt="back">
@@ -10,37 +10,42 @@
         <button id="transaction" class="border border-[#ffa500] py-2 px-4 my-1 mx-0.2 rounded-lg">{{ $transactionName }}</button>
     </div>
     <div class=" w-full flex flex-col bg-white mt-6">
-        <form action="{{ route('transfer.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('transfer.update', ['id'=> $id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
             <input type="hidden" name="user_id" value="{{ $user }}">
             <input type="hidden" name="transaction_type_id" value="{{ $transactionId }}">
             <div class="mt-3">
                 <x-input-label for="Title" :value="__('Title')" />
-                <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" :value="old('title')" autofocus autocomplete="name" />
+                <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" value="{{ $transaction->title ?? old('title') }}" autofocus autocomplete="name" />
                 <x-input-error class="mt-2" :messages="$errors->get('title')" />
             </div>
             <div class="w-full flex justify-start items-center mt-3 gap-3">
                 <select id="category" name="category_id" class="border border-[#ffa500] py-2 my-1 rounded-lg">
                     <option value="" disabled selected>Category</option>
                     @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    <option value="{{ $category->id }}" {{ old('category_id', $transaction->category_id ?? '') == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
                     @endforeach
                 </select>
                 <select id="tags" name="tag_id" class="border border-[#ffa500] py-2 my-1 rounded-lg">
                     <option value="" disabled selected>Tags</option>
                     @foreach ($tags as $tag)
-                        <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                    <option value="{{ $tag->id }}" {{ old('tag_id', $transaction->tag_id ?? '') == $tag->id ? 'selected' : '' }}>
+                        {{ $tag->name }}
+                    </option>
                     @endforeach
                 </select>
             </div>
             <div class="mt-3">
                 <x-input-label for="Description" :value="__('Description')" />
-                <x-text-input id="description" name="description" type="text" class="mt-1 block w-full" :value="old('description')" autofocus autocomplete="Description" />
+                <x-text-input id="description" name="description" type="text" class="mt-1 block w-full" value="{{ $transaction->description ?? old('description') }}" autofocus autocomplete="Description" />
                 <x-input-error class="mt-2" :messages="$errors->get('description')" />
             </div>
             <div class="mt-3">
                 <x-input-label for="Created At" :value="__('Created At')" />
-                <x-text-input id="date" name="date" type="datetime-local" class="mt-1 block w-full" :value="old('date')" autofocus autocomplete="Created At" />
+                <x-text-input id="date" name="date" type="datetime-local" class="mt-1 block w-full" value="{{ $transaction->date ?? old('date') }}" autofocus autocomplete="Created At" />
                 <x-input-error class="mt-2" :messages="$errors->get('date')" />
             </div>
             <div class="mt-3">
@@ -48,7 +53,9 @@
                 <select id="wallet_id" name="wallet_id" type="select" class="mt-1 block w-full border-gray-300 text-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"  autofocus autocomplete="Payment Method" >
                     <option value="" disabled selected>From</option>
                     @foreach ($wallets as $wallet)
-                        <option value="{{ $wallet->id }}" {{ old('wallet_id') == $wallet->id ? 'selected' : '' }}>{{ Str::title($wallet->name) }}</option>
+                    <option value="{{ $wallet->id }}" {{ old('wallet_id', $transaction->wallet_id ?? '') == $wallet->id ? 'selected' : '' }}>
+                        {{ Str::title($wallet->name) }}
+                    </option>
                     @endforeach
                 </select>
                 <x-input-error class="mt-2" :messages="$errors->get('wallet_id')" />
@@ -58,19 +65,21 @@
                 <select id="to_wallet_id" name="to_wallet_id" type="select" class="mt-1 block w-full border-gray-300 text-gray-600 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"  autofocus autocomplete="Payment Method" >
                     <option value="" disabled selected>destination</option>
                     @foreach ($wallets as $wallet)
-                        <option value="{{ $wallet->id }}" {{ old('to_wallet_id') == $wallet->id ? 'selected' : '' }}>{{ Str::title($wallet->name) }}</option>
+                        <option value="{{ $wallet->id }}" {{ old('to_wallet_id', $transaction->to_wallet_id ?? '') == $wallet->id ? 'selected' : '' }}>
+                            {{ Str::title($wallet->name) }}
+                        </option>
                     @endforeach
                 </select>
                 <x-input-error class="mt-2" :messages="$errors->get('to_wallet_id')" />
             </div>
             <div class="mt-3">
                 <x-input-label for="Fee" :value="__('Fee')" />
-                <x-text-input id="fee" name="fee" type="number" min="0" class="mt-1 block w-full" :value="old('fee')"  autofocus autocomplete="fee" />
+                <x-text-input id="fee" name="fee" type="number" min="0" class="mt-1 block w-full" value="{{ $transaction->fee ?? old('fee') }}"  autofocus autocomplete="fee" />
                 <x-input-error class="mt-2" :messages="$errors->get('fee')" />
             </div>
             <div class="mt-3">
                 <x-input-label for="Amount" :value="__('Amount')" />
-                <x-text-input id="amount" name="amount" type="number" min="0" class="mt-1 block w-full" :value="old('amount')"  autofocus autocomplete="Amount" />
+                <x-text-input id="amount" name="amount" type="number" min="0" class="mt-1 block w-full" value="{{ $transaction->amount ?? old('amount') }}"  autofocus autocomplete="Amount" />
                 <x-input-error class="mt-2" :messages="$errors->get('amount')" />
             </div>
             <div class="flex mt-3">
