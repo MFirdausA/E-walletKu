@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\category;
-use App\Models\transaction;
-use App\Models\TransactionType;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\category;
+use App\Models\transfer;
+use App\Models\transaction;
+use Illuminate\Http\Request;
+use App\Models\plannedPayment;
+use App\Models\TransactionType;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -15,21 +18,42 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $transactions = transaction::whereMonth('date', Carbon::now('Asia/Jakarta')->month)->get();
+        $user = Auth::user()->id;
+        $transactions = Transaction::where('user_id', $user)
+        // ->whereMonth('date', Carbon::now('Asia/Jakarta')->month)
+        ->orderBy('date', 'desc')
+        ->get();
+
+        $transfers = Transfer::where('user_id', $user)
+        ->orderBy('date', 'desc')
+        ->get();
+
+        $plannedPayments = PlannedPayment::where('user_id', $user)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+        $allTransactions = $transactions->concat($transfers)->concat($plannedPayments);
+        $types = $transactions->map(function ($transaction) {
+            return $transaction->transactionType->name;
+        });
+        // dd($types);
         $income =  TransactionType::where('name', 'Income')->first();
         $incomeAmount = transaction::where('transaction_type_id', $income->id)
-            ->whereMonth('date', Carbon::now('Asia/Jakarta')->month)
+            // ->whereMonth('date', Carbon::now('Asia/Jakarta')->month)
+            ->where('user_id', $user)
             ->sum('amount');
         $expense =  TransactionType::where('name', 'Expense')->first();
         $expenseAmount = transaction::where('transaction_type_id', $expense->id)
-            ->whereMonth('date', Carbon::now('Asia/Jakarta')->month)
+            // ->whereMonth('date', Carbon::now('Asia/Jakarta')->month)
+            ->where('user_id', $user)
             ->sum('amount');
         $amount = $incomeAmount - $expenseAmount;
         $categoryTransaction =  Category::pluck('name');
         $dateFormat =  carbon::now()->format('F d');
         $dateOfDay =  carbon::now()->format('l');
         return view('pages.home',[
-        'transactions' => $transactions,
+        'user' => $user,
+        'allTransactions' => $allTransactions,
         'amount' => $amount, 
         'incomeAmount' => $incomeAmount, 
         'expenseAmount' => $expenseAmount,
@@ -41,11 +65,12 @@ class HomeController extends Controller
 
     public function filter(Request $request)
     {
+    $user = Auth::user()->id;
     $filterType = $request->input('filterType');
     $startDate = $request->input('startDate');
     $endDate = $request->input('endDate');
-
-    $query = Transaction::query();
+    
+    $query = Transaction::query()->where('user_id', $user);
 
     switch ($filterType) {
         case 'daily':
@@ -81,6 +106,7 @@ class HomeController extends Controller
         $dateFormat =  carbon::now()->format('F d');
         $dateOfDay =  carbon::now()->format('l');
     return view('pages.home', [
+        'user' => $user,
         'transactions' => $transactions,
         'amount' => $amount,
         'incomeAmount' => $incomeAmount,
