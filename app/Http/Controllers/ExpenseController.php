@@ -29,7 +29,7 @@ class ExpenseController extends Controller
     public function create()
     {
         $user = Auth::user()->id;
-        $wallets = Wallet::all()->map(function ($wallet) {
+        $wallets = Wallet::whereNull('user_id')->orWhere('user_id', $user)->get()->map(function ($wallet) {
             $incomeAmount = Transaction::where('wallet_id', $wallet->id)
                 ->whereHas('transactionType', function ($query) {
                     $query->where('name', 'Income');
@@ -41,15 +41,20 @@ class ExpenseController extends Controller
                     $query->where('name', 'Expense');
                 })
                 ->sum('amount');
-            
-            $transferIn = Transfer::where('to_wallet_id', $wallet->id)->sum('amount');
-            $transferOut = Transfer::where('wallet_id', $wallet->id)->sum('amount');
+
+            $user = Auth::user()->id;
+            $transferIn = Transfer::where('to_wallet_id', $wallet->id)
+            ->where('user_id', $user)
+            ->sum('amount');
+            $transferOut = Transfer::where('wallet_id', $wallet->id)
+            ->where('user_id', $user)
+            ->sum('amount');
             
             $wallet->remainingBalance = ($incomeAmount - $expenseAmount) + ($transferIn - $transferOut);
             return $wallet;
         });
-        $categories = category::all();
-        $tags = tag::all();
+        $categories = category::whereNull('user_id')->orWhere('user_id', $user)->get();
+        $tags = tag::whereNull('user_id')->orWhere('user_id', $user)->get();
         $transactionType = TransactionType::all();
         $transactionName = $transactionType->firstWhere('id', 4)->name;
         $transactionid = $transactionType->firstWhere('id', 4)->id;
@@ -117,11 +122,12 @@ class ExpenseController extends Controller
      */
     public function show(Request $request)
     {
+        $user = Auth::user()->id;
         $filterType = $request->input('filterType');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
-    
-        $query = Transaction::where('transaction_type_id', 4);
+        
+        $query = Transaction::where('transaction_type_id', 4)->where('user_id', $user)->orderBy('date', 'desc');
     
         switch ($filterType) {
             case 'daily':
@@ -163,7 +169,38 @@ class ExpenseController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = Auth::user()->id;
+        $transaction = Transaction::find($id);
+        $wallets = Wallet::whereNull('user_id')->orWhere('user_id', $user)->get()->map(function ($wallet) {
+            $incomeAmount = Transaction::where('wallet_id', $wallet->id)
+                ->whereHas('transactionType', function ($query) {
+                    $query->where('name', 'Income');
+                })
+                ->sum('amount');
+    
+            $expenseAmount = Transaction::where('wallet_id', $wallet->id)
+                ->whereHas('transactionType', function ($query) {
+                    $query->where('name', 'Expense');
+                })
+                ->sum('amount');
+
+            $user = Auth::user()->id;
+            $transferIn = Transfer::where('to_wallet_id', $wallet->id)
+            ->where('user_id', $user)
+            ->sum('amount');
+            $transferOut = Transfer::where('wallet_id', $wallet->id)
+            ->where('user_id', $user)
+            ->sum('amount');
+            
+            $wallet->remainingBalance = ($incomeAmount - $expenseAmount) + ($transferIn - $transferOut);
+            return $wallet;
+        });
+        $categories = category::whereNull('user_id')->orWhere('user_id', $user)->get();
+        $tags = tag::whereNull('user_id')->orWhere('user_id', $user)->get();
+        $transactionType = TransactionType::all();
+        $transactionName = $transactionType->firstWhere('id', 4)->name;
+        $transactionid = $transactionType->firstWhere('id', 4)->id;
+        return view('pages.expense.edit', compact('id','transaction', 'wallets', 'categories', 'tags', 'transactionType', 'transactionName', 'transactionid', 'user'));
     }
 
     /**
@@ -171,7 +208,55 @@ class ExpenseController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $transaction = transaction::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:255',
+            'description' => 'required|max:255',
+            'date' => 'required|date',
+            'wallet_id' => 'required',
+            'user_id'=>'required',
+            'amount' => 'required|',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+        }
+
+        $wallet = Wallet::findOrFail($request->wallet_id);
+        $incomeAmount = Transaction::where('wallet_id', $wallet->id)
+            ->whereHas('transactionType', function ($query) {
+                $query->where('name', 'Income');
+            })
+            ->sum('amount');
+
+        $expenseAmount = Transaction::where('wallet_id', $wallet->id)
+            ->whereHas('transactionType', function ($query) {
+                $query->where('name', 'Expense');
+            })
+            ->sum('amount');
+
+        $transferIn = Transfer::where('to_wallet_id', $wallet->id)->sum('amount');
+        $transferOut = Transfer::where('wallet_id', $wallet->id)->sum('amount');
+
+        $remainingBalance = ($incomeAmount - $expenseAmount) + ($transferIn - $transferOut);
+
+        if ($request->amount > $remainingBalance) {
+            return redirect()->back()->withErrors(['amount' => 'The balance is not enough'])->withInput();;
+        }
+
+        $transaction->update([
+            'title' => $request->title,
+            'transaction_type_id' => $request->transaction_type_id,
+            'description' => $request->description,
+            'date' => $request->date,
+            'wallet_id' => $request->wallet_id,
+            'amount' => $request->amount,
+            'category_id' => $request->category_id,
+            'tag_id' => $request->tag_id,
+            'user_id' => $request->user_id,
+        ]);
+        return redirect()->route('home.index');
     }
 
     /**
@@ -179,6 +264,8 @@ class ExpenseController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $transaction = Transaction::findOrFail($id);
+        $transaction->delete();
+        return redirect()->route('home.index')->with('success', 'Transaction deleted successfully');
     }
 }
