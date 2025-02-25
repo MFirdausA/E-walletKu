@@ -1,60 +1,86 @@
 @extends('layouts.app')
+<title>Category</title>
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
 
 <div class="container p-6">
-    <div class="font-bold flex justify-center items-center text-xl">CATEGORIES</div>
-    <div class="w-full flex justify-between items-center mt-4">
-        <a href="">
-            <img class="w-4" src="{{ asset('img/back.svg') }}" alt="back">
-        </a>
-        <div class="w-[42px] h-[42px] px-2 bg-[#ffa500] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
-            <div class="text-center text-white text-xl font-normal font-['Poppins']">+</div>
+
+    <div class="flex justify-start items-center w-full mb-4">
+            <a href="{{ route('category.index') }}" >
+                <img class="w-4" src="{{ asset('img/back.svg') }}" alt="">
+            </a>
+        <div class="flex items-center justify-center w-full">
+            <h1 class="text-2xl font-bold">Categories</h1>
         </div>
     </div>
-    <div class="card">
-        <div class=" bg-[#ffa500] rounded-tl-xl rounded-tr-xl mt-[32px] p-3">
-            <div class="w-full">
-                <div class="self-stretch font-medium">
-                    Category name
-                </div>
-                <div class="justify-center items-center mt-[18px]">
-                    <div class="self-stretch text-2xl font-bold flex text-wrap justify-center">-20.000,00 IDR</div>
+    <div class="flex flex-col justify-center items-start w-full">
+        <div class="w-full">
+            <div class="flex flex-col justify-center items-start">
+                <div class=" grid-flow-col auto-cols-4">
+                    <div class="flex justify-start items-center">
+                        <button data-modal-target="addWalletModal" data-modal-toggle="addWalletModal" type="button" class="flex items-center bg-[#ffa500] text-white font-bold mb-2 py-2 px-4 rounded-lg gap-2">
+                            <span>Add Category</span>
+                            <span class="bg-white text-[#ffa500] rounded-full w-6 h-6 flex items-center justify-center">+</span>
+                        </button>
+                    </div>
+                    @foreach ( $categories as $category )
+                    <button class="grid-flow-col auto-cols-4 border border-[#ffa500] py-2 px-4 my-1 mx-0.2 rounded-lg flex">
+                        <div class="flex justify-start items-center gap-1">
+                            <img class="w-6" src="{{ asset('storage/' . $category->cover) }}" alt="">
+                            {{ $category->name}}
+                        </div>
+                    </button>
+                    <form action="{{ route('income.destroy', $category->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button class="bg-white p-2 rounded-lg shadow-lg flex items-center">
+                            <img src="{{ asset('img/trash-icon.svg') }}" alt="">
+                        </button>
+                    </form>
+                    @endforeach
                 </div>
             </div>
         </div>
-            <div class="bg-white rounded-b-xl py-3 justify-around items-center flex">
-                <div class="items-center text-wrap">
-                    <div class="text-black font-bold">income this month</div>
-                    <div class="flex justify-center">
-                        <div class="text-black font-bold">40.000,00 IDR</div>
-                    </div>
-                </div>
-                <div class="items-center text-wrap">
-                    <div class="text-black font-bold">expense this month</div>
-                    <div class="flex justify-center">
-                        <div class="text-black font-bold">40.000,00 IDR</div>
-                    </div>
-                </div>
-            </div>
     </div>
-    <div id="BottomNav" class="relative flex w-full h-[100px] shrink-0">
-        <nav class="fixed bottom-5 w-full max-w-[640px] px-5 left-[50%] translate-x-[-50%] z-10">
-            <div class="grid grid-cols-3 h-fit rounded-[40px] justify-between items-center py-4 px-5 bg-[#ffa500]">
-                <a href="{{ route('home.index') }}" class="flex m-auto flex-row items-center text-center gap-2">
-                    <img src="{{ asset('img/home-icon.svg') }}" class="w-4 h-4 flex shrink-0" alt="icon">
-                    <span class="font-semibold text-sm text-white">Home</span>
-                </a>
-                <a href="" class="flex flex-col items-center  text-center gap-2">
-                    <div class="w-9 h-9 bg-[#f2f4f5] rounded-full flex-row justify-center items-center inline-flex">
-                        <div class="text-center text-[#ffa500] text-xl font-normal font-['Poppins']">+</div>
+    <div id="addWalletModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-white rounded-lg shadow-sm">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+                    <h3 class="text-lg font-semibold text-black">
+                        Add new category
+                    </h3>
+                    <button type="button" class="text-gray-400 bg-transparent hover:bg-red-500 hover:text-white rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-toggle="addWalletModal">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <form action="{{ route('category.store') }}" method="POST" enctype="multipart/form-data" class="p-4 md:p-5">
+                    @csrf
+                    <div class="flex flex-col gap-4 mb-4">
+                        <div>
+                            <x-input-label for="name" :value="__('Name')" />
+                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name')"  autofocus autocomplete="name" />
+                            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                        </div>
+                        <div class="flex flex-col">
+                            <x-input-label for="cover" :value="__('Icon')" />
+                            <input type="file" id="cover" name="cover"
+                                class="mb-2 w-full text-sm text-gray-500 file:py-2 rounded-full  file:text-sm file:font-semibold file:bg-[#ffa500] file:text-white hover:file:bg-[#cc8400]">
+                            <x-input-error class="mt-2" :messages="$errors->get('cover')" />
+                        </div>
                     </div>
-                </a>
-                <a href="" class="flex flex-row items-center m-auto text-center gap-2">
-                    <img src="{{ asset('img/wallet-icon.svg') }}" class="w-4 h-4 flex shrink-0" alt="icon">
-                    <span class="font-semibold text-sm text-white">Wallet</span>
-                </a>
+                    <x-primary-button>
+                        {{ __('Save') }}
+                    </x-primary-button>
+                </form>
             </div>
-        </nav>
-    </div>
+        </div>
+    </div> 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 @endsection
