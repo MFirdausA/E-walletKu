@@ -56,7 +56,7 @@ class CategoryController extends Controller
         return view('pages.category.index', compact(
             'categories',
             'incomeAmount',
-            'expenseAmount'
+            'expenseAmount',
         ));
     }
 
@@ -69,7 +69,7 @@ class CategoryController extends Controller
         $categories = category::whereNull('user_id')->orWhere('user_id', $user)->get();
         session(['user_id' => $user]);
         return view('pages.category.create', compact(
-            'categories'
+            'categories',
         ));
     }
 
@@ -96,8 +96,9 @@ class CategoryController extends Controller
 
         if ($request->hasFile('cover')) {
             $file = $request->file('cover');
-            $path = $file->store('covers', 'public'); // Simpan file dan dapatkan path
+            $path = $file->storeAs('covers', "Icon-{$request->name}.{$file->extension()}", 'public');
         }
+        
 
         category::create([
             'name' => $request->name,
@@ -128,23 +129,43 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $category = Category::findOrFail($id);
+    $category = Category::findOrFail($id);
+    $filePath = $category->cover;
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:15',
-        ]);
-        
-        if ($validator->fails()) {
-            return redirect()->back()
-            ->withErrors($validator)
-            ->withInput();
-        }
-        
-        $category->update([
-            'name' => $request->name,
-        ]);
+    $request->merge([
+        'user_id' => session('user_id'),
+    ]);
+
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|max:15',
+        'cover' => 'image|mimes:jpeg,png,jpg,svg|max:2048',
+        'user_id' => 'required',
+    ]);
     
-        return response()->json(['success' => true]);
+    if ($validator->fails()) {
+        return redirect()->back()
+        ->withErrors($validator)
+        ->withInput();
+    }
+
+    if ($request->hasFile('cover')) {
+        // Hapus file lama jika ada
+        if ($category->cover) {
+            Storage::delete('public/' . $category->cover);
+        }
+        // Simpan file baru
+        $file = $request->file('cover');
+        $path = $file->storeAs('covers', "Icon-{$request->name}.{$file->extension()}", 'public');
+        
+        $filePath = $path;
+    }
+
+    $category->update([
+        'name' => $request->name,
+        'cover' => $filePath,
+        'user_id' => $request->user_id
+    ]);
+    return redirect()->route('category.create')->with('success', 'Category updated successfully');
     }
 
     /**
@@ -155,6 +176,6 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->delete();
 
-    return response()->json(['success' => true]);
+    return redirect()->route('category.create')->with('success', 'Category deleted successfully');
     }
 }
