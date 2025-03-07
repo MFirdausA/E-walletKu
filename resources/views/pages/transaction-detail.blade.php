@@ -47,6 +47,10 @@
                 <a href="{{ route('expense.show') }}" >
                     <img class="w-4" src="{{ asset('img/back.svg') }}" alt="">
                 </a>
+            @elseif (@$from == 'history-transfer')
+                <a href="{{ route('transfer.index') }}" >
+                    <img class="w-4" src="{{ asset('img/back.svg') }}" alt="">
+                </a>
             @else 
             <a href="{{ route('home.index') }}" >
                 <img class="w-4" src="{{ asset('img/back.svg') }}" alt="">

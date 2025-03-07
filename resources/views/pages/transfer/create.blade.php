@@ -4,9 +4,15 @@
 
     <div class="font-bold flex justify-center items-center text-xl">Transfer </div>
     <div class="w-full flex justify-between items-center mt-4">
+        @if (@$from == 'history-transfer')
+        <a href="{{ route('transfer.index') }}">
+            <img class="w-4" src="{{ asset('img/back.svg') }}" alt="back">
+        </a>
+        @else
         <a href="{{ route('home.index') }}">
             <img class="w-4" src="{{ asset('img/back.svg') }}" alt="back">
         </a>
+        @endif
         <button id="transaction" class="border border-[#ffa500] py-2 px-4 my-1 mx-0.2 rounded-lg">{{ $transactionName }}</button>
     </div>
     <div class=" w-full flex flex-col bg-white mt-6">

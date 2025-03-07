@@ -19,14 +19,19 @@ class TransferController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user()->id;
+        $transfers = transfer::where('user_id', $user)->get();
+        // dd($transfers);
+        return view('pages.transfer.index', compact('transfers'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
+        $from = $request->from;
+        
         $wallets = wallet::all();
         $user = Auth::user()->id;
         $categories = category::all();
@@ -34,7 +39,7 @@ class TransferController extends Controller
         $transactionType = TransactionType::all();
         $transactionId = $transactionType->firstWhere('id', 5)->id;
         $transactionName = $transactionType->firstWhere('id', 5)->name;
-        return view('pages.transfer.create', compact('transactionType', 'transactionName' ,'transactionId', 'categories', 'tags', 'user', 'wallets'));
+        return view('pages.transfer.create', compact('transactionType', 'transactionName' ,'transactionId', 'categories', 'tags', 'user', 'wallets', 'from'));
     }
 
     /**
