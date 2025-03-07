@@ -8,6 +8,7 @@ use App\Models\transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class WalletController extends Controller
@@ -60,6 +61,7 @@ class WalletController extends Controller
         // dd($income);
         $expense =  TransactionType::where('name', 'Expense')->first();
         $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
+        session(['user_id' => $user]);
         return view('pages.wallet.detail', compact('incomeAmount', 'expenseAmount', 'wallets'));
     }
 
@@ -68,13 +70,13 @@ class WalletController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user()->id;
         $request->merge([
-            'user_id' => $user,
+            'user_id' => session('user_id'),
         ]);
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
-            'cover' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048|dimensions:max_width=16,max_height=16',
+            'cover' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'user_id' => 'required',
         ]);
         if ($validator->fails()) {
@@ -82,9 +84,15 @@ class WalletController extends Controller
             ->withErrors($validator)
             ->withInput();
         }
+
+        if ($request->hasFile('cover')) {
+            $file = $request->file('cover');
+            $path = $file->storeAs('covers', "Icon-{$request->name}.{$file->extension()}", 'public');
+        }
+
         wallet::create([
             'name' => $request->name,
-            'cover' => $request->cover,
+            'cover' => $path,
             'user_id' => $request->user_id
         ]);
         return redirect()->route('wallet.create')->with('success', 'Wallet created successfully');
@@ -112,11 +120,28 @@ class WalletController extends Controller
     public function update(Request $request, string $id)
     {
         $wallet = wallet::findOrFail($id);
+        $filePath = $wallet->cover;
+
+        $request->merge([
+            'user_id' => session('user_id'),
+        ]);
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|max:255',
-            'cover' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048|dimensions:max_width=16,max_height=16',
+            'name' => 'required|max:25',
+            'cover' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        if ($request->hasFile('cover')) {
+            // Hapus file lama jika ada
+            if ($wallet->cover) {
+                Storage::delete('public/' . $wallet->cover);
+            }
+            // Simpan file baru
+            $file = $request->file('cover');
+            $path = $file->storeAs('covers', "Icon-{$request->name}.{$file->extension()}", 'public');
+            
+            $filePath = $path;
+        }
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -125,7 +150,8 @@ class WalletController extends Controller
         }
         $wallet->update([
             'name' => $request->name,
-            'cover' => $request->cover,
+            'cover' => $filePath,
+            'user_id' => $request->user_id
         ]);
         return redirect()->route('wallet.create')->with('success', 'Wallet updated successfully');
     }
@@ -135,7 +161,8 @@ class WalletController extends Controller
      */
     public function destroy(string $id)
     {
-        wallet::destroy($id);
+        $wallet = wallet::findOrFail($id);
+        $wallet->delete();
         return redirect()->route('wallet.create')->with('success', 'Wallet deleted successfully');
     }
 }
