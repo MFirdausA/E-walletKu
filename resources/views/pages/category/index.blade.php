@@ -8,8 +8,8 @@
         <a href="{{ route('home.index')}}">
             <img class="w-4" src="{{ asset('img/back.svg') }}" alt="back">
         </a>
-        <a href="{{ route('category.create') }}" class="w-[42px] h-[42px] px-2 bg-[#ffa500] rounded-[100px] justify-center items-center gap-2.5 inline-flex">
-            <div class="text-center text-white text-xl font-normal font-['Poppins']">+</div>
+        <a href="{{ route('category.create') }}" class="px-2 border-2 border-[#ffa500] bg-transparent hover:bg-[#ffa500] py-2 rounded-md justify-center items-center gap-2.5 inline-flex">
+            <div class="text-center text-black text-[14px] font-normal font-['Poppins']">Manage Categories</div>
         </a>
     </div>
     @foreach ( $categories as $category )
