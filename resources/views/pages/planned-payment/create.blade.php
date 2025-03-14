@@ -78,7 +78,7 @@
                             <x-input-error class="mt-2" :messages="$errors->get('planned_transaction_type_id')" />
                         </div>
                         <div class="mt-3">
-                            <x-input-label for="Start date" :value="__('Start date')" />
+                            <x-input-label for="Start date" :value="__('Planned date for')" />
                             <x-text-input id="start_date" name="start_date" type="datetime-local" class="mt-1 block w-full" :value="old('start_date')" autofocus autocomplete="start_date" />
                             <x-input-error class="mt-2" :messages="$errors->get('start_date')" />
                         </div>

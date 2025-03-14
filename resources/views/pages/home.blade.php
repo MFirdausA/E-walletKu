@@ -4,10 +4,11 @@
         <div class="container p-6">
             <div>
                 <div class="flex justify-between w-full">
-                    <div class="text-base text-black font-bold underline items-center">
-                        <a href="{{route('profile.edit')}}"><p>Hi, {{ Auth::user()->name }}</p></a>
-                    </div>
-                    <div class="px-2 py-2 bg-[#ffa500] rounded-md justify-center items-center gap-1.5 inline-flex">
+                    <a href="{{route('settings')}}" class="text-base bg-white hover:bg-slate-100 text-black font-bold rounded-full flex justify-center px-4 py-2 items-center">
+                        <div class="mr-2"><p>Hi, {{ Auth::user()->name }}</p></div>
+                        <img src="{{ asset('img/down.png') }}" class="w-4 fill-black" alt="">
+                    </a>
+                    <div class="px-4 py-2 bg-[#ffa500] rounded-full justify-center items-center gap-1.5 inline-flex">
                         <button id="openFilterButton" class="flex justify-between items-center gap-1.5">
                             <p class="text-xs font-normal items-center">Filter</p>
                             <svg id="fi_7693332" enable-background="new 0 0 24 24" height="12" viewBox="0 0 24 24" width="12" xmlns="http://www.w3.org/2000/svg"><g><path d="m18 13h-12c-.6 0-1-.4-1-1s.4-1 1-1h12c.6 0 1 .4 1 1s-.4 1-1 1z"></path></g><g><path d="m15 19h-6c-.6 0-1-.4-1-1s.4-1 1-1h6c.6 0 1 .4 1 1s-.4 1-1 1z"></path></g><g><path d="m21 7h-18c-.6 0-1-.4-1-1s.4-1 1-1h18c.6 0 1 .4 1 1s-.4 1-1 1z"></path></g></svg>
@@ -113,6 +114,110 @@
                     </div>
                 </div>
             </section>
+            <!-- Planned -->
+            <section>
+                <!-- Upcoming -->
+                @if ($upcomingPayments->count() > 0)
+                <div class="bg-white rounded-xl shadow-md mt-2 mb-2">
+                        
+                    <input type="checkbox" id="accordion-upcoming" class="peer hidden">
+                    
+                    <label for="accordion-upcoming" class="p-4 flex justify-between items-center cursor-pointer block">
+                        <h2 class="text-lg font-bold text-green-500">Upcoming</h2>
+                        <span class="text-gray-600 transition-transform duration-300 peer-checked:rotate-180">▼</span>
+                    </label>
+                    @foreach ( $upcomingPayments as $transaction )
+                    <div class="peer-checked:block hidden p-4 border-t">
+                        <a href="{{ route('pages.transaction-detail', ['id' => $transaction->id, 'from' => 'home', 'type' => 'Planned']) }}">
+                            <div class="flex gap-2 mb-3">
+                                <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
+                                    <div class="justify-center items-center gap-3 inline-flex">
+                                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">{{ $transaction->category->name }}</div>
+                                    <img class="w-4 h-4" src="{{ asset('storage/' . $transaction->category->cover) }}" />
+                                    </div>
+                                </div>
+                                <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
+                                    <div class="justify-center items-center gap-3 inline-flex">
+                                    <div class="text-center text-black text-[12px] font-normal font-['Poppins']">{{ $transaction->wallet->name }}</div>
+                                    <img class="w-4 h-4" src="{{ asset('storage/' . $transaction->wallet->cover) }}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-500">DUE ON {{ $transaction->start_date }}</p>
+                            <p class="text-lg font-bold text-gray-800">{{ $transaction->title}}</p>
+                            <div class="flex-col justify-start items-center">
+                                <div class="flex-row justify-start items-center gap-2.5 inline-flex">
+                                    <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
+                                        <img class="w-6 h-6" src="{{ asset('storage/' . $transaction->transactionType->cover) }}" />
+                                    </div>
+                                    <div class="h-full justify-start items-center gap-2.5 inline-flex">
+                                        <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">{{ number_format($transaction->amount, 2, ',', '.') }}</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="mt-4 flex gap-3">
+                            <button onclick="skipPayment({{ $transaction->id }})" class="flex-1 py-2 border rounded-lg text-gray-600">Skip</button>
+                            <button onclick="payPayment({{ $transaction->id }})" class="flex-1 py-2 bg-gray-800 text-white rounded-lg">Pay</button>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                    <div class="display-none"></div>
+                @endif
+                <!-- Upcoming end -->
+                <!-- Overdue -->
+                @if ($overduePayments->count() > 0)
+                <div class="bg-white rounded-xl shadow-md mt-2 mb-2">
+                        
+                    <input type="checkbox" id="accordion-overdue" class="peer hidden">
+                    
+                    <label for="accordion-overdue" class="p-4 flex justify-between items-center cursor-pointer block">
+                        <h2 class="text-lg font-bold text-red-600">Overdue</h2>
+                        <span class="text-gray-600 transition-transform duration-300 peer-checked:rotate-180">▼</span>
+                    </label>
+                    @foreach ( $overduePayments as $transaction )
+                    <div class="peer-checked:block hidden p-4 border-t">
+                        <div class="flex gap-2 mb-3">
+                            <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
+                                <div class="justify-center items-center gap-3 inline-flex">
+                                <div class="text-center text-black text-[12px] font-normal font-['Poppins']">{{ $transaction->category->name }}</div>
+                                <img class="w-4 h-4" src="{{ asset('storage/' . $transaction->category->cover) }}" />
+                                </div>
+                            </div>
+                            <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
+                                <div class="justify-center items-center gap-3 inline-flex">
+                                <div class="text-center text-black text-[12px] font-normal font-['Poppins']">{{ $transaction->wallet->name }}</div>
+                                <img class="w-4 h-4" src="{{ asset('storage/' . $transaction->wallet->cover) }}" />
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-500">DUE ON {{ \Carbon\Carbon::parse($transaction->start_date)->format('d M Y H:i') }}</p>
+                        <p class="text-lg font-bold text-gray-800">{{ $transaction->title}}</p>
+                        <div class="flex-col justify-start items-center p-2">
+                            <div class="flex-row justify-start items-center gap-2.5 inline-flex">
+                                <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
+                                    <img class="w-6 h-6" src="{{ asset('storage/' . $transaction->transactionType->cover) }}" />
+                                </div>
+                                <div class="h-full justify-start items-center gap-2.5 inline-flex">
+                                    <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">{{ number_format($transaction->amount, 2, ',', '.') }}</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex gap-3">
+                            <button onclick="skipPayment({{ $transaction->id }})" class="flex-1 py-2 border rounded-lg text-gray-600">Skip</button>
+                            <button onclick="payPayment({{ $transaction->id }})" class="flex-1 py-2 bg-gray-800 text-white rounded-lg">Pay</button>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                    <div class="display-none"></div>
+                @endif
+                <!-- Overdue end -->                
+            </section>
+            <!-- Planned end -->
             <section class="mt-1">
                 <div class="w-full self-stretch border-t border-[#919191] justify-start items-center gap-2 inline-flex">
                     <div class="w-full justify-start items-center pt-1 gap-2.5 flex">
@@ -126,6 +231,39 @@
             </section>
             <section>
                 @foreach ($allTransactions as $transaction)
+                @if ($transaction->transactionType->name == 'Planned' && $transaction->status->name == 'Complete')
+                <a href="{{route('pages.transaction-detail', ['id' => $transaction->id, 'from' => 'home', 'type' => $transaction->transactionType->name])}}">
+                    <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
+                        <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
+                            <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
+                                <div class="justify-center items-center gap-3 inline-flex">
+                                <div class="text-center text-black text-[12px] font-normal font-['Poppins']">{{ $transaction->category->name }}</div>
+                                <img class="w-4 h-4" src="{{ asset('storage/' . $transaction->category->cover) }}" />
+                                </div>
+                            </div>
+                            <div class="px-3 py-1 bg-[#4baae5] rounded-xl flex-col justify-center items-center inline-flex">
+                                <div class="justify-center items-center gap-3 inline-flex">
+                                <div class="text-center text-black text-[12px] font-normal font-['Poppins']">{{ $transaction->wallet->name }}</div>
+                                <img class="w-4 h-4" src="{{ asset('storage/' . $transaction->wallet->cover) }}" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full flex justify-start items-center pt-2">
+                            <div class="text-slate-400 text-[14px] font-medium italic">Your bill for {{ \Carbon\Carbon::parse($transaction->start_date)->format('F Y') }} has been paid </div>
+                        </div>
+                        <div class="flex-col justify-start items-center pt-2 pb-5">
+                            <div class="flex-row justify-start items-center gap-2.5 inline-flex">
+                                <div class="h-8 p-1 bg-[#5cf58a] rounded-full justify-start items-center gap-2.5 inline-flex">
+                                    <img class="w-6 h-6" src="{{ asset('storage/' . $transaction->transactionType->cover) }}" />
+                                </div>
+                                <div class="h-full justify-start items-center gap-2.5 inline-flex">
+                                    <div class="text-center"><span class="text-black text-base font-bold font-['Poppins']">{{ number_format($transaction->amount, 2, ',', '.') }}</span><span class="text-black text-xl font-normal font-['Poppins']"> IDR</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                @elseif (in_array($transaction->transactionType->name, ['Income', 'Expense', 'Transfer']))
                 <a href="{{route('pages.transaction-detail', ['id' => $transaction->id, 'from' => 'home', 'type' => $transaction->transactionType->name])}}">
                     <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
                         <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
@@ -154,6 +292,7 @@
                         </div>
                     </div>
                 </a>
+                @endif
                 @endforeach
             </section>
             <div id="BottomNav" class="relative flex w-full h-[100px] shrink-0">
@@ -318,5 +457,63 @@
                     }
                 });
             });
+        </script>
+        <script>
+            // document.addEventListener("DOMContentLoaded", function() {
+            //     document.querySelectorAll('.btn-pay').forEach(button => {
+            //         button.addEventListener('click', function() {
+            //             let id = this.getAttribute('data-id');
+            //             payPayment(id);
+            //         });
+            //     });
+        
+            //     document.querySelectorAll('.btn-skip').forEach(button => {
+            //         button.addEventListener('click', function() {
+            //             let id = this.getAttribute('data-id');
+            //             skipPayment(id);
+            //         });
+            //     });
+            // });
+        
+            function payPayment(id) {
+                fetch(`/planned-payment/pay/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("Error: " + data.error);
+                    } else {
+                        alert(data.message);
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        
+            function skipPayment(id) {
+                fetch(`/planned-payment/skip/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("Error: " + data.error);
+                    } else {
+                        alert(data.message);
+                        location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
         </script>
 @endsection

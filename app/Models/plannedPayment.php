@@ -59,4 +59,9 @@ class plannedPayment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function plannedType()
+    {
+        return $this->belongsTo(TransactionType::class, 'planned_transaction_type_id', 'id');
+    }
 }

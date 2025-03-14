@@ -24,4 +24,9 @@ class repeatType extends Model
     {
         return $this->hasMany(PlannedPayment::class);
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

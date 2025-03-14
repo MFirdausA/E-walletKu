@@ -51,6 +51,10 @@
                 <a href="{{ route('transfer.index') }}" >
                     <img class="w-4" src="{{ asset('img/back.svg') }}" alt="">
                 </a>
+            @elseif (@$from == 'planned-schedule')
+                <a href="{{ route('planned.index') }}" >
+                    <img class="w-4" src="{{ asset('img/back.svg') }}" alt="">
+                </a>
             @else 
             <a href="{{ route('home.index') }}" >
                 <img class="w-4" src="{{ asset('img/back.svg') }}" alt="">
@@ -183,6 +187,15 @@
         @elseif (@$type == 'Planned')
         <div class="container">
             <div class="flex-row bg-white p-3 rounded-lg shadow-lg mt-6">
+                @if ($transaction->status->name == 'Upcoming')
+                <div class="bg-orange-200 py-1 px-4 rounded-full w-fit">
+                    <p class="text-orange-500">{{ $transaction->status->name }}</p>
+                </div>
+                @elseif ($transaction->status->name == 'Overdue')
+                <div class="bg-red-200 py-1 px-4 rounded-full w-fit">
+                    <p class="text-red-500">{{ $transaction->status->name }}</p>
+                </div>
+                @endif
                 <div class="w-full">
                     <div class="w-full text-2xl font-semibold">
                         <p class="text-[#5F5F5F]">{{ $transaction->title }}</p>
@@ -198,8 +211,16 @@
                         <p>{{ $transaction->wallet->name }}</p>
                     </div>
                     <div class="mt-2 w-full">
-                        <p class="text-[#5F5F5F]">Date & Time</p>
-                        <p>{{ $transaction->created_at }}</p>
+                        <p class="text-[#5F5F5F]">Created At</p>
+                        <p>{{ $transaction->start_date }}</p>
+                    </div>
+                    <div class="mt-2 w-full">
+                        <p class="text-[#5F5F5F]">Type of Plan</p>
+                        <p>{{ $transaction->plannedType->name }}</p>
+                    <div class="mt-2 w-full">
+                        <p class="text-[#5F5F5F]">Repeat Every</p>
+                        <p>{{ $transaction->repeatType->name }} / {{ $transaction->repeat_count }}X</p>
+                    </div>
                     </div>
                 </div>
             </div>

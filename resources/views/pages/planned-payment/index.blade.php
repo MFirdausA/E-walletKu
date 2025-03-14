@@ -17,7 +17,7 @@
     </div>
     <section class="mt-2">
         @foreach ($plannedPayments as $plannedPayment )
-        <div class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
+        <a href="{{ route('pages.transaction-detail', ['id' => $plannedPayment->id, 'type' => 'Planned', 'from' => 'planned-schedule']) }}" class="w-full p-2 mb-2 bg-[#fcfcfc] flex-col rounded-xl justify-start items-start inline-flex">
             <div class="w-full h-full flex-row justify-start items-center gap-2.5 inline-flex">
                 <div class="px-3 py-1 bg-[#ffa500] rounded-xl flex-col justify-center items-center inline-flex">
                     <div class="justify-center items-center gap-3 inline-flex">
@@ -42,7 +42,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
         @endforeach
     </section>
 </div>

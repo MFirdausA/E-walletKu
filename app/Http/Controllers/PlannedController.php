@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\tag;
+use App\Models\status;
 use App\Models\wallet;
 use App\Models\category;
+use App\Models\repeatType;
 use Illuminate\Http\Request;
 use App\Models\plannedPayment;
-use App\Models\repeatType;
-use App\Models\status;
 use App\Models\TransactionType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -85,20 +86,39 @@ class PlannedController extends Controller
             ->withErrors($validator)
             ->withInput();
         }
-        plannedPayment::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'start_date' => $request->start_date,
-            'transaction_type_id' => $request->transaction_type_id,
-            'planned_transaction_type_id' => $request->planned_transaction_type_id,
-            'wallet_id' => $request->wallet_id,
-            'amount' => $request->amount,
-            'category_id' => $request->category_id,
-            'status_id' => $request->status_id,
-            'repeat_type_id' => $request->repeat_type_id,
-            'repeat_count' => $request->repeat_count,
-            'user_id' => $request->user_id,
-        ]);
+
+        $startDate = Carbon::parse($request->start_date)->timezone('Asia/Jakarta');
+        $repeatTypes = $request->repeat_type_id;
+        $repeatCount = $request->repeat_count;
+        $userId = $request->user_id;
+
+        for ($i = 0; $i < $repeatCount; $i++) {
+            plannedPayment::create([
+                'title' => $request->title,
+                'description' => $request->description,
+                'start_date' => $startDate->toDateTimeString(),
+                'transaction_type_id' => $request->transaction_type_id,
+                'planned_transaction_type_id' => $request->planned_transaction_type_id,
+                'wallet_id' => $request->wallet_id,
+                'amount' => $request->amount,
+                'category_id' => $request->category_id,
+                'status_id' => $request->status_id,
+                'repeat_type_id' => $request->repeat_type_id,
+                'repeat_count' => $request->repeat_count,
+                'user_id' => $request->user_id,
+            ]);
+        }
+
+        if ($repeatTypes == 'Daily') {
+            $startDate->addDay();
+        } elseif ($repeatTypes == 'Weekly') {
+            $startDate->addWeek();
+        } elseif ($repeatTypes == 'Monthly') {
+            $startDate->addMonth();
+        } elseif ($repeatTypes == 'Yearly') {
+            $startDate->addYear();
+        }
+
         return redirect()->route('home.index');
     }
 

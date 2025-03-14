@@ -85,6 +85,8 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/transaction-save', ['uses' => 'App\Http\Controllers\TransactionDetailController@TransactionSave', 'as' => 'pages.transaction-save']);
     Route::get('/home/filter', [HomeController::class, 'filter'])->name('home.filter');
     Route::get('/report/filter', [ExpenseController::class, 'show'])->name('report.filter');
+    Route::put('planned-payment/pay/{id}', ['uses' => 'App\Http\Controllers\HomeController@payPlanned', 'as' => 'planned.pay']);
+    Route::delete('planned-payment/skip/{id}', ['uses' => 'App\Http\Controllers\HomeController@skipPlanned', 'as' => 'planned.skip']);
 });
 
 require __DIR__.'/auth.php';

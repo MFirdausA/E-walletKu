@@ -15,6 +15,11 @@ class TransactionDetailController extends Controller
     {
         $from = $request->from;
         $type = $request->type;
+
+        if (!$from || !$type) {
+            return redirect()->route('home.index')->with('error', 'Transaction not found');
+        }
+        
         $transaction= Transaction::find($request->id);
 
         if (!$transaction) {

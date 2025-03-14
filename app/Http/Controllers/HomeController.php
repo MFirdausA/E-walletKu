@@ -29,8 +29,12 @@ class HomeController extends Controller
         ->get();
 
         $plannedPayments = PlannedPayment::where('user_id', $user)
-        ->orderBy('created_at', 'desc')
+        ->with('status')
+        ->orderBy('start_date', 'asc')
         ->get();
+
+        $upcomingPayments = $plannedPayments->where('status.name', 'Upcoming');
+        $overduePayments = $plannedPayments->where('status.name', 'Overdue');
 
         $allTransactions = $transactions->concat($transfers)->concat($plannedPayments);
         $types = $transactions->map(function ($transaction) {
@@ -59,7 +63,10 @@ class HomeController extends Controller
         'expenseAmount' => $expenseAmount,
         'categoryTransaction' => $categoryTransaction,
         'dateFormat' => $dateFormat,
-        'dateOfDay' => $dateOfDay
+        'dateOfDay' => $dateOfDay,
+        'plannedPayments' => $plannedPayments,
+        'upcomingPayments' => $upcomingPayments,
+        'overduePayments' => $overduePayments,
     ]);
     }
 
@@ -115,6 +122,37 @@ class HomeController extends Controller
         'dateFormat' => $dateFormat,
         'dateOfDay' => $dateOfDay,
     ]);
+    }
+
+    public function payPlanned(Request $request, string $id)
+    {
+        $transaction = plannedPayment::find($id);
+
+        if (!$transaction) {
+            return response()->json(['error' => 'Payment not found'], 404);
+        }
+
+        $transaction->update(['status_id' => 3]); // Ganti dengan ID status "Complete"
+
+        return response()->json([
+            'message' => 'Payment marked as Complete',
+            'payment' => $transaction
+        ]);
+    }
+
+    public function skipPlanned(string $id)
+    {
+        $transaction = plannedPayment::find($id);
+
+        if (!$transaction) {
+            return response()->json(['error' => 'Payment not found'], 404);
+        }
+
+        $transaction->delete();
+        return response()->json([
+            'message' => 'Payment Skipped and deleted',
+            'payment' => $transaction
+        ]);
     }
 
     /**
