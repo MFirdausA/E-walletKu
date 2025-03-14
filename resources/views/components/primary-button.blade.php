@@ -1,3 +1,3 @@
-<button {{ $attributes->merge(['type' => 'submit', 'class' => 'inline-flex items-center  py-2 bg-[#ff9d00] dark:bg-[#ff9d00] border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150 w-full justify-center']) }}>
+<button {{ $attributes->merge(['type' => 'submit', 'class' => 'inline-flex items-center py-2 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest bg-[#D97706] hover:bg-[#ff9d00] focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 w-full justify-center']) }}>
     {{ $slot }}
 </button>
