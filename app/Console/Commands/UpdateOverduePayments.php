@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Carbon\Carbon;
 use App\Models\plannedPayment;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class UpdateOverduePayments extends Command
 {
@@ -28,10 +29,10 @@ class UpdateOverduePayments extends Command
      */
     public function handle()
     {
-        plannedPayment::where('status_id', '!=', 'Complete')
+        plannedPayment::where('status_id', '!=', 3)
         ->whereDate('start_date', '<', Carbon::today()->timezone('Asia/Jakarta'))
-        ->update(['status_id' => 'Overdue']);
+        ->update(['status_id' => 2]);
 
-    $this->info('Overdue payments updated successfully.');
+        Log::info('Overdue payments updated successfully.');
     }
 }
