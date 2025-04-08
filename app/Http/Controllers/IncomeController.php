@@ -93,6 +93,10 @@ class IncomeController extends Controller
             case 'daily':
                 $query->whereDate('date', Carbon::today('Asia/Jakarta'));
                 break;
+            case 'weekly':
+                $query->whereDate('date', '>=', Carbon::now('Asia/Jakarta')->startOfWeek())
+                    ->whereDate('date', '<=', Carbon::now('Asia/Jakarta')->endOfWeek());
+                break;
             case 'monthly':
                 $query->whereMonth('date', Carbon::now('Asia/Jakarta')->month);
                 break;
