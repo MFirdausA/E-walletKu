@@ -268,7 +268,9 @@
                     </button>
                 </a>
                 @endif
-                <button id="saveTransaction" class="bg-yellow-500 w-full text-black font-bold py-4 rounded-lg hover:bg-yellow-600">Simpan</button>
+                <a href="{{ route('pages.transaction-save', $transaction->id) }}" id="saveTransaction" class="bg-yellow-500 flex w-full justify-center text-black font-bold py-4 rounded-lg hover:bg-yellow-600">
+                    Save Transaction
+                </a>
             </div>
         </div>
     </div>
