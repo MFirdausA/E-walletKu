@@ -8,6 +8,7 @@ use App\Models\transfer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Event\Tracer\Tracer;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransactionDetailController extends Controller
 {
@@ -36,9 +37,18 @@ class TransactionDetailController extends Controller
         return view('pages.transaction-detail', compact('transaction', 'from','type'));
     }
 
-    public function TransactionSave(Request $request)
+    public function TransactionSave($id)
     {
-        $transaction= Transaction::find($request->id);
-        return view('pages.transaction-save', compact('transaction'));
+        $transaction= Transaction::find($id);
+        $filename = 'receipt_'.$transaction->id.'_'.time().'.pdf';
+        $path = storage_path('app/public/receipts/'.$filename);
+
+        $pdf = Pdf::loadView('pages.transaction-save', compact('transaction'));
+        $pdf->setPaper('A4', 'landscape');
+        $pdf->setOptions(['defaultFont' => 'poppins']);
+        $pdf->save($path);
+
+        return response()->download($path)->deleteFileAfterSend(true);
+        // return view('pages.transaction-save', compact('transaction'));
     }
 }

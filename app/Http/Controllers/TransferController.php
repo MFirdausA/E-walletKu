@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\tag;
 use App\Models\wallet;
 use App\Models\category;
+use App\Models\transfer;
 use App\Models\transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
-use App\Models\transfer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -17,12 +18,44 @@ class TransferController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user()->id;
-        $transfers = transfer::where('user_id', $user)->get();
+        // $transfers = Transfer::where('user_id', $user)->get();
+        $filterType = $request->input('filterType');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        $query = Transfer::where('user_id', $user);
+    
+        switch ($filterType) {
+            case 'daily':
+                $query->whereDate('date', Carbon::today('Asia/Jakarta'));
+                break;
+            case 'weekly':
+                $query->whereDate('date', '>=', Carbon::now('Asia/Jakarta')->startOfWeek())
+                    ->whereDate('date', '<=', Carbon::now('Asia/Jakarta')->endOfWeek());
+                break;
+            case 'monthly':
+                $query->whereMonth('date', Carbon::now('Asia/Jakarta')->month);
+                break;
+            case 'yearly':
+                $query->whereYear('date', Carbon::now('Asia/Jakarta')->year);
+                break;
+            case 'custom':
+                if ($startDate && $endDate) {
+                    $query->whereBetween('date', [$startDate, $endDate]);
+                } elseif ($startDate) {
+                    $query->where('date', '>=', $startDate);
+                } elseif ($endDate) {
+                    $query->where('date', '<=', $endDate);
+                }
+                break;
+        }
+
+        $transfers = $query->get();
         // dd($transfers);
-        return view('pages.transfer.index', compact('transfers'));
+        return view('pages.transfer.index', compact('transfers', 'filterType'));
     }
 
     /**

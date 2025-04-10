@@ -123,8 +123,9 @@
                                 <label for="filterType" class="block text-sm font-medium text-gray-700">Filter Type</label>
                                 <select id="filterType" name="filterType" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option value="daily">Daily</option>
+                                    <option value="weekly">Last 7 Days</option>
                                     <option value="monthly">Monthly</option>
-                                    <option value="yearly">Yearly</option>
+                                    {{-- <option value="yearly">Yearly</option> --}}
                                     <option value="custom">Custom Date Range</option>
                                 </select>
                             </div>

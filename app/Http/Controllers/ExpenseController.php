@@ -133,12 +133,16 @@ class ExpenseController extends Controller
             case 'daily':
                 $query->whereDate('date', Carbon::today('Asia/Jakarta'));
                 break;
+            case 'weekly':
+                $query->whereDate('date', '>=', Carbon::now('Asia/Jakarta')->startOfWeek())
+                    ->whereDate('date', '<=', Carbon::now('Asia/Jakarta')->endOfWeek());
+                break;
             case 'monthly':
                 $query->whereMonth('date', Carbon::now('Asia/Jakarta')->month);
                 break;
-            case 'yearly':
-                $query->whereYear('date', Carbon::now('Asia/Jakarta')->year);
-                break;
+            // case 'yearly':
+            //     $query->whereYear('date', Carbon::now('Asia/Jakarta')->year);
+            //     break;
             case 'custom':
                 if ($startDate && $endDate) {
                     $query->whereBetween('date', [$startDate, $endDate]);

@@ -72,56 +72,94 @@ class HomeController extends Controller
 
     public function filter(Request $request)
     {
-    $user = Auth::user()->id;
-    $filterType = $request->input('filterType');
-    $startDate = $request->input('startDate');
-    $endDate = $request->input('endDate');
-    
-    $query = Transaction::query()->where('user_id', $user);
+        $user = Auth::user()->id;
+        $filterType = $request->input('filterType');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        
+        // Base queries
+        $transactionQuery = Transaction::where('user_id', $user);
+        $transferQuery = Transfer::where('user_id', $user);
+        $plannedPaymentQuery = PlannedPayment::where('user_id', $user);
 
-    switch ($filterType) {
-        case 'daily':
-            $query->whereDate('date', Carbon::today('Asia/Jakarta'));
-            break;
-        case 'monthly':
-            $query->whereMonth('date', Carbon::now('Asia/Jakarta')->month);
-            break;
-        case 'yearly':
-            $query->whereYear('date', Carbon::now('Asia/Jakarta')->year);
-            break;
-        case 'custom':
-            if ($startDate && $endDate) {
-                // Jika kedua tanggal diisi, gunakan whereBetween
-                $query->whereBetween('date', [$startDate, $endDate]);
-            } elseif ($startDate) {
-                // Jika hanya startDate diisi, cari transaksi setelah atau pada startDate
-                $query->where('date', '>=', $startDate);
-            } elseif ($endDate) {
-                // Jika hanya endDate diisi, cari transaksi sebelum atau pada endDate
-                $query->where('date', '<=', $endDate);
-            }
-            break;
-    }
+        // Apply filters to each query
+        switch ($filterType) {
+            case 'daily':
+                $transactionQuery->whereDate('date', Carbon::today('Asia/Jakarta'));
+                $transferQuery->whereDate('date', Carbon::today('Asia/Jakarta'));
+                $plannedPaymentQuery->whereDate('start_date', Carbon::today('Asia/Jakarta'));
+                break;
+            case 'weekly':
+                $transactionQuery->whereBetween('date', [
+                    Carbon::now('Asia/Jakarta')->startOfWeek(),
+                    Carbon::now('Asia/Jakarta')->endOfWeek()
+                ]);
+                $transferQuery->whereBetween('date', [
+                    Carbon::now('Asia/Jakarta')->startOfWeek(),
+                    Carbon::now('Asia/Jakarta')->endOfWeek()
+                ]);
+                $plannedPaymentQuery->whereBetween('start_date', [
+                    Carbon::now('Asia/Jakarta')->startOfWeek(),
+                    Carbon::now('Asia/Jakarta')->endOfWeek()
+                ]);
+                break;
+            case 'monthly':
+                $transactionQuery->whereMonth('date', Carbon::now('Asia/Jakarta')->month);
+                $transferQuery->whereMonth('date', Carbon::now('Asia/Jakarta')->month);
+                $plannedPaymentQuery->whereMonth('start_date', Carbon::now('Asia/Jakarta')->month);
+                break;
+            case 'custom':
+                if ($startDate && $endDate) {
+                    $transactionQuery->whereBetween('date', [$startDate, $endDate]);
+                    $transferQuery->whereBetween('date', [$startDate, $endDate]);
+                    $plannedPaymentQuery->whereBetween('start_date', [$startDate, $endDate]);
+                } elseif ($startDate) {
+                    $transactionQuery->where('date', '>=', $startDate);
+                    $transferQuery->where('date', '>=', $startDate);
+                    $plannedPaymentQuery->where('start_date', '>=', $startDate);
+                } elseif ($endDate) {
+                    $transactionQuery->where('date', '<=', $endDate);
+                    $transferQuery->where('date', '<=', $endDate);
+                    $plannedPaymentQuery->where('start_date', '<=', $endDate);
+                }
+                break;
+        }
 
-        $transactions = $query->get();
-        $income =  TransactionType::where('name', 'Income')->first();
+        $transactions = $transactionQuery->orderBy('date', 'desc')->get();
+        $transfers = $transferQuery->orderBy('date', 'desc')->get();
+        $plannedPayments = $plannedPaymentQuery->with('status')
+            ->orderBy('start_date', 'asc')
+            ->get();
+
+        $allTransactions = $transactions->concat($transfers)->concat($plannedPayments);
+
+        $income = TransactionType::where('name', 'Income')->first();
         $incomeAmount = $transactions->where('transaction_type_id', $income->id)->sum('amount');
-        $expense =  TransactionType::where('name', 'Expense')->first();
+        
+        $expense = TransactionType::where('name', 'Expense')->first();
         $expenseAmount = $transactions->where('transaction_type_id', $expense->id)->sum('amount');
+        
         $amount = $incomeAmount - $expenseAmount;
-        $categoryTransaction =  Category::pluck('name');
-        $dateFormat =  carbon::now()->format('F d');
-        $dateOfDay =  carbon::now()->format('l');
-    return view('pages.home', [
-        'user' => $user,
-        'transactions' => $transactions,
-        'amount' => $amount,
-        'incomeAmount' => $incomeAmount,
-        'expenseAmount' => $expenseAmount,
-        'categoryTransaction' => $categoryTransaction,
-        'dateFormat' => $dateFormat,
-        'dateOfDay' => $dateOfDay,
-    ]);
+
+        $upcomingPayments = $plannedPayments->where('status.name', 'Upcoming');
+        $overduePayments = $plannedPayments->where('status.name', 'Overdue');
+        $categoryTransaction = Category::pluck('name');
+        $dateFormat = Carbon::now()->format('F d');
+        $dateOfDay = Carbon::now()->format('l');
+
+        return view('pages.home', [
+            'user' => $user,
+            'allTransactions' => $allTransactions,
+            'amount' => $amount,
+            'incomeAmount' => $incomeAmount,
+            'expenseAmount' => $expenseAmount,
+            'categoryTransaction' => $categoryTransaction,
+            'dateFormat' => $dateFormat,
+            'dateOfDay' => $dateOfDay,
+            'plannedPayments' => $plannedPayments,
+            'upcomingPayments' => $upcomingPayments,
+            'overduePayments' => $overduePayments,
+        ]);
     }
 
     public function payPlanned(Request $request, string $id)
