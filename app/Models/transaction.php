@@ -34,7 +34,7 @@ class transaction extends Model
 
     public function wallet()
     {
-        return $this->belongsTo(Wallet::class);
+        return $this->belongsTo(wallet::class);
     }
 
     // public function transactionTypes()
