@@ -44,11 +44,11 @@ class TransactionDetailController extends Controller
         $path = storage_path('app/public/receipts/'.$filename);
 
         $pdf = Pdf::loadView('pages.transaction-save', compact('transaction'));
-        $pdf->setPaper('A4', 'landscape');
+        $pdf->setPaper('A4', 'portrait');
         $pdf->setOptions(['defaultFont' => 'poppins']);
         $pdf->save($path);
 
         return response()->download($path)->deleteFileAfterSend(true);
-        // return view('pages.transaction-save', compact('transaction'));
+        // return view('pages.transaction-save', compact('transaction','id'));
     }
 }

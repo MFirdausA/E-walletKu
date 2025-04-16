@@ -73,7 +73,7 @@ class IncomeController extends Controller
             'tag_id' => $request->tag_id,
             'user_id' => $request->user_id,
         ]);
-        return redirect()->route('home.index');
+        return redirect()->route('home.index')->with('success', 'Transaction created successfully');
     }
 
     /**
@@ -178,7 +178,7 @@ class IncomeController extends Controller
             'user_id' => $request->user_id,
         ]);
         
-        return redirect()->route('home.index')->with('success', 'Transaction updated successfully');
+        return redirect()->route('home.index')->with('success', 'Transaction updated successfully')->with('success', 'Transaction updated successfully');
     }
 
     /**
@@ -188,6 +188,6 @@ class IncomeController extends Controller
     {
         $transaction = Transaction::findOrFail($id);
         $transaction->delete();
-        return redirect()->route('home.index')->with('success', 'Transaction deleted successfully');
+        return redirect()->route('home.index')->with('success', 'Transaction deleted successfully')->with('success', 'Transaction deleted successfully');
     }
 }

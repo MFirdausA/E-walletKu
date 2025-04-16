@@ -101,7 +101,7 @@
                                 </div>
                             </a>
                         </button>
-                        <button class="w-full items-center">
+                        {{-- <button class="w-full items-center">
                             <a href="">
                             <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
                                 <img src="{{ asset('img/loan-icon.svg') }}" alt="">
@@ -110,7 +110,7 @@
                                 <div class="text-black text-xs text-center font-normal font-['Poppins']">Loan</div>
                             </div>
                         </a>
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
             </section>

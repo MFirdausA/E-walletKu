@@ -96,7 +96,7 @@ class PlannedController extends Controller
             plannedPayment::create([
                 'title' => $request->title,
                 'description' => $request->description,
-                'start_date' => $startDate->toDateTimeString(),
+                'start_date' => $startDate,
                 'transaction_type_id' => $request->transaction_type_id,
                 'planned_transaction_type_id' => $request->planned_transaction_type_id,
                 'wallet_id' => $request->wallet_id,
@@ -119,7 +119,7 @@ class PlannedController extends Controller
             $startDate->addYear();
         }
 
-        return redirect()->route('home.index');
+        return redirect()->route('home.index')->with('success', 'Transaction created successfully');
     }
 
     /**
@@ -202,7 +202,7 @@ class PlannedController extends Controller
             'repeat_count' => $request->repeat_count,
             'user_id' => $request->user_id,
         ]);
-        return redirect()->route('home.index');
+        return redirect()->route('home.index')->with('success', 'Transaction updated successfully');
     }
 
     /**

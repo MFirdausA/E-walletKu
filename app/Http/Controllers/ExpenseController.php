@@ -114,7 +114,7 @@ class ExpenseController extends Controller
             'tag_id' => $request->tag_id,
             'user_id' => $request->user_id,
         ]);
-        return redirect()->route('home.index');
+        return redirect()->route('home.index')->with('success', 'Transaction created successfully');
     }
 
     /**
@@ -260,7 +260,7 @@ class ExpenseController extends Controller
             'tag_id' => $request->tag_id,
             'user_id' => $request->user_id,
         ]);
-        return redirect()->route('home.index');
+        return redirect()->route('home.index')->with('success', 'Transaction updated successfully');
     }
 
     /**
@@ -270,6 +270,6 @@ class ExpenseController extends Controller
     {
         $transaction = Transaction::findOrFail($id);
         $transaction->delete();
-        return redirect()->route('home.index')->with('success', 'Transaction deleted successfully');
+        return redirect()->route('home.index')->with('success', 'Transaction deleted successfully')->with('success', 'Transaction deleted successfully');
     }
 }

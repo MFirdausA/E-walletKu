@@ -99,6 +99,10 @@ class TransferController extends Controller
             ->withInput();
         }
 
+        $amount = $request->amount;
+        $fee = $request->fee;
+        $totalAmount = $amount + $fee;
+
         transfer::create([
             'user_id' => $request->user_id,
             'title' => $request->title,
@@ -113,7 +117,7 @@ class TransferController extends Controller
             'user_id' => $request->user_id,
             'transaction_type_id' => $request->transaction_type_id
         ]);
-        return redirect()->route('home.index');
+        return redirect()->route('home.index')->with('success', 'Transfer created successfully');
     }
 
     /**
@@ -166,6 +170,10 @@ class TransferController extends Controller
             ->withInput();
         }
 
+        $amount = $request->amount;
+        $fee = $request->fee;
+        $totalAmount = $amount - $fee;
+
         $transaction->update([
             'user_id' => $request->user_id,
             'title' => $request->title,
@@ -180,7 +188,7 @@ class TransferController extends Controller
             'user_id' => $request->user_id,
             'transaction_type_id' => $request->transaction_type_id
         ]);
-        return redirect()->route('home.index');
+        return redirect()->route('home.index')->with('success', 'Transaction updated successfully');
     }
 
     /**

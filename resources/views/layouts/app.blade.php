@@ -154,6 +154,7 @@
 
         @yield('content')
 
+                @include('components.toast')
             </div>
         </body>
 </html>
