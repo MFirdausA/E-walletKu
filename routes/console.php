@@ -9,4 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 
-Schedule::command('app:update-overdue-payments')->everyFiveMinutes();
+Schedule::command('update:planned-payment')->everyFiveMinutes();
