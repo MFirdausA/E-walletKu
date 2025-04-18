@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\tag;
-use App\Models\wallet;
-use App\Models\category;
-use App\Models\transfer;
-use App\Models\transaction;
+use App\Models\Tag;
+use App\Models\Wallet;
+use App\Models\Category;
+use App\Models\Transfer;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
 use Illuminate\Support\Facades\Auth;
@@ -65,10 +65,10 @@ class TransferController extends Controller
     {
         $from = $request->from;
         
-        $wallets = wallet::all();
+        $wallets = Wallet::all();
         $user = Auth::user()->id;
-        $categories = category::all();
-        $tags = tag::all();
+        $categories = Category::all();
+        $tags = Tag::all();
         $transactionType = TransactionType::all();
         $transactionId = $transactionType->firstWhere('id', 5)->id;
         $transactionName = $transactionType->firstWhere('id', 5)->name;
@@ -99,7 +99,11 @@ class TransferController extends Controller
             ->withInput();
         }
 
-        transfer::create([
+        $amount = $request->amount;
+        $fee = $request->fee;
+        $totalAmount = $amount + $fee;
+
+        Transfer::create([
             'user_id' => $request->user_id,
             'title' => $request->title,
             'description' => $request->description,
@@ -113,7 +117,7 @@ class TransferController extends Controller
             'user_id' => $request->user_id,
             'transaction_type_id' => $request->transaction_type_id
         ]);
-        return redirect()->route('home.index');
+        return redirect()->route('home.index')->with('success', 'Transfer created successfully');
     }
 
     /**
@@ -129,11 +133,11 @@ class TransferController extends Controller
      */
     public function edit(string $id)
     {
-        $transaction = transfer::find($id);
-        $wallets = wallet::all();
+        $transaction = Transfer::find($id);
+        $wallets = Wallet::all();
         $user = Auth::user()->id;
-        $categories = category::all();
-        $tags = tag::all();
+        $categories = Category::all();
+        $tags = Tag::all();
         $transactionType = TransactionType::all();
         $transactionId = $transactionType->firstWhere('id', 5)->id;
         $transactionName = $transactionType->firstWhere('id', 5)->name;
@@ -145,7 +149,7 @@ class TransferController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $transaction = transfer::findOrFail($id);
+        $transaction = Transfer::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:255',
@@ -166,6 +170,10 @@ class TransferController extends Controller
             ->withInput();
         }
 
+        $amount = $request->amount;
+        $fee = $request->fee;
+        $totalAmount = $amount - $fee;
+
         $transaction->update([
             'user_id' => $request->user_id,
             'title' => $request->title,
@@ -180,7 +188,7 @@ class TransferController extends Controller
             'user_id' => $request->user_id,
             'transaction_type_id' => $request->transaction_type_id
         ]);
-        return redirect()->route('home.index');
+        return redirect()->route('home.index')->with('success', 'Transaction updated successfully');
     }
 
     /**
@@ -188,7 +196,7 @@ class TransferController extends Controller
      */
     public function destroy(string $id)
     {
-        $transaction = transfer::find($id);
+        $transaction = Transfer::find($id);
         $transaction->delete();
         return redirect()->route('home.index')->with('success', 'Transaction deleted successfully');
     }

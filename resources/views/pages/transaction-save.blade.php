@@ -39,13 +39,27 @@
 <html>
 <head>
     <title>Transaction Receipt</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet' media="screen,print">
+    <link rel="stylesheet" href="https://cdn.tailwindcss.com" media="screen,print">
     <style>
-        /* Base Styles */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f2f2f7;
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: 'Poppins';
+                background-color: white;
+                -webkit-print-color-adjust: exact;
+            }
+
+            #body {
+                margin: 0px 0px;
+                background-color: white;
+            }
+
         }
         
         #Content-Container {
@@ -54,17 +68,21 @@
             flex-direction: column;
             width: 100%;
             max-width: 640px;
-            min-height: 100vh;
+            /* min-height: 100vh; */
             margin-left: auto;
             margin-right: auto;
-            background-color: #f2f2f7;
+            background-color: white;
             overflow-x: hidden;
         }
         
         .transaction-receipt {
-            padding: 1.5rem;
-            min-height: 100vh;
-            background: linear-gradient(to bottom, #ffa500, white);
+            padding: 1rem;
+            margin-top: auto;
+            margin-bottom: auto;
+            background: #FFA500;
+            border-radius: 1rem;
+            /* background:  */
+            /* background: linear-gradient(180deg, rgba(255, 165, 0, 1) 0%, rgba(255, 255, 255, 1) 90%); */
         }
         
         /* Header Styles */
@@ -163,7 +181,7 @@
     <div id="Content-Container">
         <div class="transaction-receipt">
             <div class="flex-col items-center">
-                <x-main-app-logo class="block w-auto fill-current" />
+                <img src="{{ asset('img/app-logo.png') }}" alt="E-WalletKu Logo" style="width: 250px">
                 <h1>E-WalletKu</h1>
             </div>
             

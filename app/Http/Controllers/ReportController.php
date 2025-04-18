@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\transaction;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
 use Illuminate\Support\Facades\Auth;

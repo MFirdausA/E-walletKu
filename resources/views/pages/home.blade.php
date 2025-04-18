@@ -94,14 +94,14 @@
                         <button class="w-full items-center">
                             <a href="{{ route('transfer.index') }}">
                                 <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
-                                    <img src="{{ asset('') }}" alt="">
+                                    <img src="{{ asset('img/transfer-icon.svg') }}" alt="">
                                 </div>
                                 <div class="gap-1 inline-flex">
                                     <div class="text-black text-xs text-center font-normal font-['Poppins']"> Transfer</div>
                                 </div>
                             </a>
                         </button>
-                        <button class="w-full items-center">
+                        {{-- <button class="w-full items-center">
                             <a href="">
                             <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
                                 <img src="{{ asset('img/loan-icon.svg') }}" alt="">
@@ -110,7 +110,7 @@
                                 <div class="text-black text-xs text-center font-normal font-['Poppins']">Loan</div>
                             </div>
                         </a>
-                        </button>
+                        </button> --}}
                     </div>
                 </div>
             </section>
@@ -327,8 +327,8 @@
                             <div class="grid grid-cols-4 gap-2">
                                 <button  class="w-full items-center">
                                     <a href="{{ route('income.create') }}">
-                                    <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
-                                        <img src="{{ asset('') }}" alt="">
+                                    <div class="w-[42px] h-[42px] m-auto bg-[#E86A14] rounded-full flex justify-center items-center">
+                                        <img src="{{ asset('img/arrow.png') }}" class="w-6 h-6" alt="income">
                                     </div>
                                     <div class="gap-1 inline-flex">
                                         <div class="text-black text-xs text-center font-normal font-['Poppins']">Income</div>
@@ -337,8 +337,8 @@
                                 </button>
                                 <button class="w-full items-center">
                                     <a href="{{ route('expense.create') }}">
-                                    <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
-                                        <img src="{{ asset('') }}" alt="">
+                                    <div class="w-[42px] h-[42px] m-auto bg-[#E86A14] rounded-full flex justify-center items-center">
+                                        <img src="{{ asset('img/arrow.png') }}" class="w-6 h-6 rotate-180" alt="expense">
                                     </div>
                                     <div class="gap-1 inline-flex">
                                         <div class="text-black text-xs text-center font-normal font-['Poppins']">Expense</div>
@@ -347,8 +347,8 @@
                                 </button>
                                 <button class="w-full items-center">
                                     <a href="{{ route('planned.create') }}">
-                                    <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
-                                        <img src="{{ asset('') }}" alt="">
+                                    <div class="w-[42px] h-[42px] m-auto bg-[#E86A14] rounded-full flex justify-center items-center">
+                                        <img src="{{ asset('img/plannedPayment-icon.svg') }}" class="w-6 h-6" alt="planned">
                                     </div>
                                     <div class="gap-1 inline-flex">
                                         <div class="text-black text-xs text-center font-normal font-['Poppins']">Planned</div>
@@ -357,8 +357,8 @@
                                 </button>
                                 <button class="w-full items-center">
                                     <a href="{{ route('transfer.create') }}">
-                                        <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
-                                            <img src="{{ asset('') }}" alt="">
+                                        <div class="w-[42px] h-[42px] m-auto bg-[#E86A14] rounded-full flex justify-center items-center">
+                                            <img src="{{ asset('img/transferTransaction-icon.svg') }}" class="w-6 h-6" alt="transfer">
                                         </div>
                                         <div class="gap-1 inline-flex">
                                             <div class="text-black text-xs text-center font-normal font-['Poppins']">Transfer</div>

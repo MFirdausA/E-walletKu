@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\plannedPayment;
-use App\Models\transaction;
-use App\Models\transfer;
+use App\Models\PlannedPayment;
+use App\Models\Transaction;
+use App\Models\Transfer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use PHPUnit\Event\Tracer\Tracer;
@@ -28,7 +28,7 @@ class TransactionDetailController extends Controller
         }
     
         if (!$transaction) {
-            $transaction = plannedPayment::find($request->id);
+            $transaction = PlannedPayment::find($request->id);
         }
     
         if (!$transaction) {
@@ -44,11 +44,11 @@ class TransactionDetailController extends Controller
         $path = storage_path('app/public/receipts/'.$filename);
 
         $pdf = Pdf::loadView('pages.transaction-save', compact('transaction'));
-        $pdf->setPaper('A4', 'landscape');
+        $pdf->setPaper('A4', 'portrait');
         $pdf->setOptions(['defaultFont' => 'poppins']);
         $pdf->save($path);
 
         return response()->download($path)->deleteFileAfterSend(true);
-        // return view('pages.transaction-save', compact('transaction'));
+        // return view('pages.transaction-save', compact('transaction','id'));
     }
 }

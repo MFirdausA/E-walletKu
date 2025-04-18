@@ -24,17 +24,17 @@ class transaction extends Model
 
     public function category()
     {
-        return $this->belongsTo(category::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function tag()
     {
-        return $this->belongsTo(tag::class, 'tag_id');
+        return $this->belongsTo(Tag::class, 'tag_id');
     }
 
     public function wallet()
     {
-        return $this->belongsTo(wallet::class);
+        return $this->belongsTo(Wallet::class);
     }
 
     // public function transactionTypes()

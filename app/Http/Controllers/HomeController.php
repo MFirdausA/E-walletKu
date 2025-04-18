@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\category;
-use App\Models\transfer;
-use App\Models\transaction;
+use App\Models\Category;
+use App\Models\Transfer;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
-use App\Models\plannedPayment;
+use App\Models\PlannedPayment;
 use App\Models\TransactionType;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,12 +42,12 @@ class HomeController extends Controller
         });
         // dd($types);
         $income =  TransactionType::where('name', 'Income')->first();
-        $incomeAmount = transaction::where('transaction_type_id', $income->id)
+        $incomeAmount = Transaction::where('transaction_type_id', $income->id)
             // ->whereMonth('date', Carbon::now('Asia/Jakarta')->month)
             ->where('user_id', $user)
             ->sum('amount');
         $expense =  TransactionType::where('name', 'Expense')->first();
-        $expenseAmount = transaction::where('transaction_type_id', $expense->id)
+        $expenseAmount = Transaction::where('transaction_type_id', $expense->id)
             // ->whereMonth('date', Carbon::now('Asia/Jakarta')->month)
             ->where('user_id', $user)
             ->sum('amount');
@@ -164,7 +164,7 @@ class HomeController extends Controller
 
     public function payPlanned(Request $request, string $id)
     {
-        $transaction = plannedPayment::find($id);
+        $transaction = PlannedPayment::find($id);
 
         if (!$transaction) {
             return response()->json(['error' => 'Payment not found'], 404);
@@ -180,7 +180,7 @@ class HomeController extends Controller
 
     public function skipPlanned(string $id)
     {
-        $transaction = plannedPayment::find($id);
+        $transaction = PlannedPayment::find($id);
 
         if (!$transaction) {
             return response()->json(['error' => 'Payment not found'], 404);

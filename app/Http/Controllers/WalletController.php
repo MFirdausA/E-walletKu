@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\wallet;
-use App\Models\transfer;
-use App\Models\transaction;
+use App\Models\Wallet;
+use App\Models\Transfer;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +27,7 @@ class WalletController extends Controller
     public function create()
     {
         $user = Auth::user()->id;
-        $transaction = transaction::where('user_id', $user)->get();
+        $transaction = Transaction::where('user_id', $user)->get();
         $wallets = Wallet::whereNull('user_id')->orWhere('user_id', $user)->get()->map(function ($wallet) use ($user) {
             $incomeAmount = Transaction::where('wallet_id', $wallet->id)
                 ->whereHas('transactionType', function ($query) {
@@ -57,10 +57,10 @@ class WalletController extends Controller
             return $wallet;
         });
         $income =  TransactionType::where('name', 'Income')->first();
-        $incomeAmount = transaction::where('transaction_type_id', $income->id)->sum('amount');
+        $incomeAmount = Transaction::where('transaction_type_id', $income->id)->sum('amount');
         // dd($income);
         $expense =  TransactionType::where('name', 'Expense')->first();
-        $expenseAmount = transaction::where('transaction_type_id', $expense->id)->sum('amount');
+        $expenseAmount = Transaction::where('transaction_type_id', $expense->id)->sum('amount');
         session(['user_id' => $user]);
         return view('pages.wallet.detail', compact('incomeAmount', 'expenseAmount', 'wallets'));
     }
@@ -90,7 +90,7 @@ class WalletController extends Controller
             $path = $file->storeAs('covers', "Icon-{$request->name}.{$file->extension()}", 'public');
         }
 
-        wallet::create([
+        Wallet::create([
             'name' => $request->name,
             'cover' => $path,
             'user_id' => $request->user_id
@@ -119,7 +119,7 @@ class WalletController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $wallet = wallet::findOrFail($id);
+        $wallet = Wallet::findOrFail($id);
         $filePath = $wallet->cover;
 
         $request->merge([
@@ -161,7 +161,7 @@ class WalletController extends Controller
      */
     public function destroy(string $id)
     {
-        $wallet = wallet::findOrFail($id);
+        $wallet = Wallet::findOrFail($id);
         $wallet->delete();
         return redirect()->route('wallet.create')->with('success', 'Wallet deleted successfully');
     }
