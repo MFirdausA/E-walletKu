@@ -54,7 +54,7 @@ class Transaction extends Model
 
     public function repeatType()
     {
-        return $this->belongsTo(RepeatType::class, 'repeat_type_id', 'id')->withTrashed();
+        return $this->belongsTo(RepeatType::class, 'repeat_type_id')->withTrashed();
     }
 
     public function status()
