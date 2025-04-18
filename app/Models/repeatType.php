@@ -22,7 +22,7 @@ class RepeatType extends Model
 
     public function plannedPayments()
     {
-        return $this->hasMany(PlannedPayment::class);
+        return $this->hasMany(PlannedPayment::class , 'repeat_type_id');
     }
 
     public function transactions()

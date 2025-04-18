@@ -47,7 +47,7 @@ class PlannedPayment extends Model
 
     public function repeatType()
     {
-        return $this->belongsTo(RepeatType::class);
+        return $this->belongsTo(RepeatType::class , 'repeat_type_id', 'id');
     }
 
     public function wallet()
