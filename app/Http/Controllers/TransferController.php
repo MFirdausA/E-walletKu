@@ -99,10 +99,6 @@ class TransferController extends Controller
             ->withInput();
         }
 
-        $amount = $request->amount;
-        $fee = $request->fee;
-        $totalAmount = $amount + $fee;
-
         Transfer::create([
             'user_id' => $request->user_id,
             'title' => $request->title,
@@ -110,7 +106,7 @@ class TransferController extends Controller
             'date' => $request->date,
             'wallet_id' => $request->wallet_id,
             'to_wallet_id' => $request->to_wallet_id,
-            'amount' => $request->amount,
+            'amount' => $request->amount - $request->fee,
             'fee' => $request->fee,
             'category_id' => $request->category_id,
             'tag_id' => $request->tag_id,
@@ -170,10 +166,6 @@ class TransferController extends Controller
             ->withInput();
         }
 
-        $amount = $request->amount;
-        $fee = $request->fee;
-        $totalAmount = $amount - $fee;
-
         $transaction->update([
             'user_id' => $request->user_id,
             'title' => $request->title,
@@ -181,7 +173,7 @@ class TransferController extends Controller
             'date' => $request->date,
             'wallet_id' => $request->wallet_id,
             'to_wallet_id' => $request->to_wallet_id,
-            'amount' => $request->amount,
+            'amount' => $request->amount - $request->fee,
             'fee' => $request->fee,
             'category_id' => $request->category_id,
             'tag_id' => $request->tag_id,

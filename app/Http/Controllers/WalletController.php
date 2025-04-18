@@ -56,11 +56,16 @@ class WalletController extends Controller
     
             return $wallet;
         });
-        $income =  TransactionType::where('name', 'Income')->first();
-        $incomeAmount = Transaction::where('transaction_type_id', $income->id)->sum('amount');
+        
+        $income = TransactionType::where('name', 'Income')->first();
+        $incomeAmount = Transaction::where('transaction_type_id', $income->id)
+            ->where('user_id', $user)
+            ->sum('amount');
         // dd($income);
-        $expense =  TransactionType::where('name', 'Expense')->first();
-        $expenseAmount = Transaction::where('transaction_type_id', $expense->id)->sum('amount');
+        $expense = TransactionType::where('name', 'Expense')->first();
+        $expenseAmount = Transaction::where('transaction_type_id', $expense->id)
+            ->where('user_id', $user)
+            ->sum('amount');
         session(['user_id' => $user]);
         return view('pages.wallet.detail', compact('incomeAmount', 'expenseAmount', 'wallets'));
     }
