@@ -22,7 +22,7 @@ class Status extends Model
 
     public function plannedPayments()
     {
-        return $this->hasMany(PlannedPayment::class);
+        return $this->hasMany(PlannedPayment::class, 'status_id');
     }
 
     public function loans()
