@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use App\Mail\OverduePlanned;
 use App\Mail\ReminderPlanned;
 use Carbon\Carbon;
-use App\Models\plannedPayment;
+use App\Models\PlannedPayment;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -41,7 +41,7 @@ class UpdateOverduePayments extends Command
         $today = Carbon::now()->timezone('Asia/Jakarta');
         $reminderDate = $today->subDay()->timezone('Asia/Jakarta');
 
-        $reminderPlanneds = plannedPayment::where('start_date', '>=', now()->subDays(1))
+        $reminderPlanneds = PlannedPayment::where('start_date', '>=', now()->subDays(1))
         ->where('start_date', '<', now())
         ->where('status_id', 1)
         ->where('reminder_sent', 0)
@@ -52,7 +52,7 @@ class UpdateOverduePayments extends Command
             $reminderPlanned->update(['reminder_sent' => 1]);
         }
 
-        $overduePlanneds = plannedPayment::where('start_date', '<=', now())
+        $overduePlanneds = PlannedPayment::where('start_date', '<=', now())
         ->where('status_id', 1)
         ->get();
 

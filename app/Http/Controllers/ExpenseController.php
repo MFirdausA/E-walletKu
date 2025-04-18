@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\tag;
-use App\Models\wallet;
-use App\Models\category;
-use App\Models\transaction;
+use App\Models\Tag;
+use App\Models\Wallet;
+use App\Models\Category;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
-use App\Models\transfer;
+use App\Models\Transfer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -53,8 +53,8 @@ class ExpenseController extends Controller
             $wallet->remainingBalance = ($incomeAmount - $expenseAmount) + ($transferIn - $transferOut);
             return $wallet;
         });
-        $categories = category::whereNull('user_id')->orWhere('user_id', $user)->get();
-        $tags = tag::whereNull('user_id')->orWhere('user_id', $user)->get();
+        $categories = Category::whereNull('user_id')->orWhere('user_id', $user)->get();
+        $tags = Tag::whereNull('user_id')->orWhere('user_id', $user)->get();
         $transactionType = TransactionType::all();
         $transactionName = $transactionType->firstWhere('id', 4)->name;
         $transactionid = $transactionType->firstWhere('id', 4)->id;
@@ -103,7 +103,7 @@ class ExpenseController extends Controller
             return redirect()->back()->withErrors(['amount' => 'The balance is not enough'])->withInput();;
         }
 
-        transaction::create([
+        Transaction::create([
             'title' => $request->title,
             'transaction_type_id' => $request->transaction_type_id,
             'description' => $request->description,
@@ -199,8 +199,8 @@ class ExpenseController extends Controller
             $wallet->remainingBalance = ($incomeAmount - $expenseAmount) + ($transferIn - $transferOut);
             return $wallet;
         });
-        $categories = category::whereNull('user_id')->orWhere('user_id', $user)->get();
-        $tags = tag::whereNull('user_id')->orWhere('user_id', $user)->get();
+        $categories = Category::whereNull('user_id')->orWhere('user_id', $user)->get();
+        $tags = Tag::whereNull('user_id')->orWhere('user_id', $user)->get();
         $transactionType = TransactionType::all();
         $transactionName = $transactionType->firstWhere('id', 4)->name;
         $transactionid = $transactionType->firstWhere('id', 4)->id;
@@ -212,7 +212,7 @@ class ExpenseController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $transaction = transaction::findOrFail($id);
+        $transaction = Transaction::findOrFail($id);
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:255',
             'description' => 'required|max:255',

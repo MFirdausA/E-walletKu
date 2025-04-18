@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\tag;
-use App\Models\wallet;
-use App\Models\category;
-use App\Models\transaction;
+use App\Models\Tag;
+use App\Models\Wallet;
+use App\Models\Category;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
 use Illuminate\Support\Facades\Auth;
@@ -28,9 +28,9 @@ class IncomeController extends Controller
     public function create(Request $request)
     {
         $user = Auth::user()->id;
-        $wallets = wallet::all();
-        $categories = category::all();
-        $tags = tag::all();
+        $wallets = Wallet::all();
+        $categories = Category::all();
+        $tags = Tag::all();
         $transactionType = TransactionType::all();
         $transactionName = $transactionType->firstWhere('id', 1)->name;
         $transactionid = $transactionType->firstWhere('id', 1)->id;
@@ -62,7 +62,7 @@ class IncomeController extends Controller
             ->withErrors($validator)
             ->withInput();
         }
-        transaction::create([
+        Transaction::create([
             'title' => $request->title,
             'transaction_type_id' => $request->transaction_type_id,
             'description' => $request->description,
@@ -137,9 +137,9 @@ class IncomeController extends Controller
         $transaction = Transaction::find($id);
         // dd($transaction->tag_id);
         $user = Auth::user()->id;
-        $wallets = wallet::all();
-        $categories = category::all();
-        $tags = tag::all();
+        $wallets = Wallet::all();
+        $categories = Category::all();
+        $tags = Tag::all();
         $transactionType = TransactionType::all();
         $transactionName = $transactionType->firstWhere('id', 1)->name;
         $transactionid = $transactionType->firstWhere('id', 1)->id;
@@ -151,7 +151,7 @@ class IncomeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $transaction = transaction::findOrFail($id);
+        $transaction = Transaction::findOrFail($id);
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:255',
             'description' => 'required|max:255',

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\category;
-use App\Models\transfer;
-use App\Models\transaction;
+use App\Models\Category;
+use App\Models\Transfer;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Models\TransactionType;
 use Illuminate\Support\Facades\Auth;
@@ -66,7 +66,7 @@ class CategoryController extends Controller
     public function create()
     {
         $user = Auth::user()->id;
-        $categories = category::whereNull('user_id')->orWhere('user_id', $user)->get();
+        $categories = Category::whereNull('user_id')->orWhere('user_id', $user)->get();
         session(['user_id' => $user]);
         return view('pages.category.create', compact(
             'categories',
@@ -100,7 +100,7 @@ class CategoryController extends Controller
         }
         
 
-        category::create([
+        Category::create([
             'name' => $request->name,
             'cover' => $path,
             'user_id' => $request->user_id
