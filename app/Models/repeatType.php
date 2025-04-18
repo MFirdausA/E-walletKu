@@ -27,6 +27,6 @@ class RepeatType extends Model
 
     public function transactions()
     {
-        return $this->hasMany(Transaction::class);
+        return $this->hasMany(Transaction::class, 'repeat_type_id');
     }
 }
