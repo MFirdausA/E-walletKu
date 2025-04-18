@@ -23,7 +23,8 @@ class PlannedController extends Controller
     {
         $user = Auth::user()->id;
         $plannedPayments = PlannedPayment::where('user_id', $user)->orderBy('created_at', 'desc')->get();
-        $amount = PlannedPayment::sum('amount');
+        $amount = PlannedPayment::where('user_id', $user)
+            ->sum('amount');
         return view('pages.planned-payment.index', compact(
             'plannedPayments',
             'amount'
