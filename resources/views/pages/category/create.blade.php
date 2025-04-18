@@ -29,12 +29,20 @@
         @foreach ($categories as $category)
         <div class="border border-[#ffa500] p-3 rounded-lg flex items-center justify-between hover:shadow-md transition-all">
             <!-- Edit Button -->
+            @if ($category->id >= 20)
             <button data-modal-target="editWalletModal{{ $category->id }}" data-modal-toggle="editWalletModal{{ $category->id }}" type="button" class="flex items-center gap-2 flex-1">
                 <img src="{{ asset('storage/'.$category->cover) }}" class="w-6 h-6 object-contain" alt="icon">
                 <span class="text-sm truncate">{{ $category->name }}</span>
             </button>
+            @else
+            <button type="button" class="flex items-center gap-2 flex-1 cursor-not-allowed" disabled>
+                <img src="{{ asset('storage/'.$category->cover) }}" class="w-6 h-6 object-contain" alt="icon">
+                <span class="text-sm truncate">{{ $category->name }}</span>
+            </button>
+            @endif
             
             <!-- Delete Button -->
+            @if ($category->id >= 20)
             <form action="{{ route('category.destroy', $category->id) }}" method="POST">
                 @csrf
                 @method('DELETE')
@@ -42,6 +50,11 @@
                     <img src="{{ asset('img/trash-icon.svg') }}" class="w-4 h-4" alt="Delete">
                 </button>
             </form>
+            @else
+            <button class="p-1 rounded-lg cursor-not-allowed" disabled>
+                <img src="{{ asset('img/trash-icon.svg') }}" class="w-4 h-4 opacity-50" alt="Cannot Delete">
+            </button>
+            @endif
         </div>
         <div id="editWalletModal{{ $category->id }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div class="relative p-4 w-full max-w-md max-h-full">
