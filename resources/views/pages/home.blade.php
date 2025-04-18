@@ -94,7 +94,7 @@
                         <button class="w-full items-center">
                             <a href="{{ route('transfer.index') }}">
                                 <div class="w-[42px] h-[42px] m-auto bg-neutral-100 rounded-full flex justify-center items-center">
-                                    <img src="{{ asset('') }}" alt="">
+                                    <img src="{{ asset('img/transfer-icon.svg') }}" alt="">
                                 </div>
                                 <div class="gap-1 inline-flex">
                                     <div class="text-black text-xs text-center font-normal font-['Poppins']"> Transfer</div>
