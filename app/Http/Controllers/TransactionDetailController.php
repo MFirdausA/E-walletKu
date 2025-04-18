@@ -28,8 +28,9 @@ class TransactionDetailController extends Controller
         }
     
         if (!$transaction) {
-            $transaction = PlannedPayment::find($request->id);
+            $transaction = PlannedPayment::with('status')->find($request->id);
         }
+        // dd($transaction);
     
         if (!$transaction) {
             return redirect()->route('home.index')->with('error', 'Transaction not found');
