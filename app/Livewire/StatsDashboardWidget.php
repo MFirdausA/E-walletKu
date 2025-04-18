@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Category;
 use App\Models\User;
-use App\Models\Walletallet;
+use App\Models\Wallet;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
