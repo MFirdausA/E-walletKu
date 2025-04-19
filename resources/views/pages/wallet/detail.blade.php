@@ -27,13 +27,19 @@
         </div>
     </div>
     @foreach ($wallets as $wallet)
-    <div class="card" data-modal-target="editWalletModal{{ $wallet->id }}" data-modal-toggle="editWalletModal{{ $wallet->id }}">
+    <div class="card @if($wallet->id < 3) cursor-not-allowed @endif"
+        @if($wallet->id >= 3)
+            data-modal-target="editWalletModal{{ $wallet->id }}"
+            data-modal-toggle="editWalletModal{{ $wallet->id }}"
+        @endif
+        >
         <div class=" bg-[#ffa500] rounded-tl-xl rounded-tr-xl mt-[24px] p-3">
             <div class="w-full">
                 <div class="self-stretch font-medium flex justify-between items-center">
                     <div>
                         {{ $wallet->name }}
                     </div>
+                    @if ($wallet->id >= 3)
                     <div>
                         <form action="{{ route('wallet.destroy', $wallet->id) }}" method="POST">
                             @csrf
@@ -43,6 +49,11 @@
                             </button>
                         </form>
                     </div>
+                    @else
+                    <button type="submit" class="p-1 bg-white rounded-lg transition-colors cursor-not-allowed" disabled>
+                                <img src="{{ asset('img/trash-icon.svg') }}" class="w-4 h-4 fill-white" alt="Delete">
+                            </button>
+                    @endif
                 </div>
                 <div class="justify-center items-center mt-[18px]">
                     <div class="self-stretch text-2xl font-bold flex text-wrap justify-center">{{ number_format($wallet->remainingBalance, 2, ',', '.') }} IDR  </div>
