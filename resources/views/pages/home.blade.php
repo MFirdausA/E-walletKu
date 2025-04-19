@@ -358,7 +358,7 @@
                                 <button class="w-full items-center">
                                     <a href="{{ route('transfer.create') }}">
                                         <div class="w-[42px] h-[42px] m-auto bg-[#E86A14] rounded-full flex justify-center items-center">
-                                            <img src="{{ asset('img/transferTransaction-icon.svg') }}" class="w-6 h-6" alt="transfer">
+                                            <img src="{{ asset('img/TransferTransaction-icon.svg') }}" class="w-6 h-6" alt="transfer">
                                         </div>
                                         <div class="gap-1 inline-flex">
                                             <div class="text-black text-xs text-center font-normal font-['Poppins']">Transfer</div>
