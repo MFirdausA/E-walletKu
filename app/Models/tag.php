@@ -29,4 +29,9 @@ class Tag extends Model
     {
         return $this->hasMany(Transfer::class);
     }
+
+    public function tags()
+    {
+        return $this->hasMany(PlannedPayment::class, 'tag_id');
+    }
 }

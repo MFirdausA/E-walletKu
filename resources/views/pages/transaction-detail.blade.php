@@ -187,13 +187,13 @@
         @elseif (@$type == 'Planned')
         <div class="container">
             <div class="flex-row bg-white p-3 rounded-lg shadow-lg mt-6">
-                @if ($transaction->status->name == 'Upcoming')
+                @if ($status->name == 'Upcoming')
                 <div class="bg-orange-200 py-1 px-4 rounded-full w-fit">
-                    <p class="text-orange-500">{{ $transaction->status->name }}</p>
+                    <p class="text-orange-500">{{ $status->name }}</p>
                 </div>
-                @elseif ($transaction->status->name == 'Overdue')
+                @elseif ($status->name == 'Overdue')
                 <div class="bg-red-200 py-1 px-4 rounded-full w-fit">
-                    <p class="text-red-500">{{ $transaction->status->name }}</p>
+                    <p class="text-red-500">{{ $status->name }}</p>
                 </div>
                 @endif
                 <div class="w-full">
