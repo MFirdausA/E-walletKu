@@ -187,11 +187,11 @@
         @elseif (@$type == 'Planned')
         <div class="container">
             <div class="flex-row bg-white p-3 rounded-lg shadow-lg mt-6">
-                @if ($transaction->status->name == 'Upcoming')
+                @if ($transaction->status && $transaction->status->name == 'Upcoming')
                 <div class="bg-orange-200 py-1 px-4 rounded-full w-fit">
                     <p class="text-orange-500">{{ $transaction->status->name }}</p>
                 </div>
-                @elseif ($transaction->status->name == 'Overdue')
+                @elseif ($transaction->status && $transaction->status->name == 'Overdue')
                 <div class="bg-red-200 py-1 px-4 rounded-full w-fit">
                     <p class="text-red-500">{{ $transaction->status->name }}</p>
                 </div>
@@ -216,10 +216,10 @@
                     </div>
                     <div class="mt-2 w-full">
                         <p class="text-[#5F5F5F]">Type of Plan</p>
-                        <p>{{ $transaction->plannedType->name }}</p>
+                        <p>{{ $transaction->transactionType->name }}</p>
                     <div class="mt-2 w-full">
                         <p class="text-[#5F5F5F]">Repeat Every</p>
-                        <p>{{ $transaction->repeatType->name }} / {{ $transaction->repeat_count }}X</p>
+                        <p>{{ $transaction->repeatType }} / {{ $transaction->repeat_count }}X</p>
                     </div>
                     </div>
                 </div>

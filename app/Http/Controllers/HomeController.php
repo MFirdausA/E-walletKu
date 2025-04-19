@@ -40,7 +40,7 @@ class HomeController extends Controller
         $types = $transactions->map(function ($transaction) {
             return $transaction->transactionType->name;
         });
-        // dd($types);
+        // dd($allTransactions);
         $income =  TransactionType::where('name', 'Income')->first();
         $incomeAmount = Transaction::where('transaction_type_id', $income->id)
             // ->whereMonth('date', Carbon::now('Asia/Jakarta')->month)

@@ -17,7 +17,7 @@ class userTableSeeders extends Seeder
         $user = User::create([
 			'name' => 'Superadmin',
 			'email' => env('DEFAULT_EMAIL', 'admin1@admin.com'),
-			'password' => Hash::make(env('DEFAULT_PASSWORD', 12345678)),
+			'password' => Hash::make(env('DEFAULT_PASSWORD', 'Alphaaa1')),
             'profile' => 'img/software-engineer.png'
         ]);
     }
