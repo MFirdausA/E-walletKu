@@ -219,7 +219,7 @@
                         <p>{{ $transaction->transactionType->name }}</p>
                     <div class="mt-2 w-full">
                         <p class="text-[#5F5F5F]">Repeat Every</p>
-                        <p>{{ $transaction->repeatType }} / {{ $transaction->repeat_count }}X</p>
+                        <p>{{ $transaction->repeatType->name }} / {{ $transaction->repeat_count }}X</p>
                     </div>
                     </div>
                 </div>
